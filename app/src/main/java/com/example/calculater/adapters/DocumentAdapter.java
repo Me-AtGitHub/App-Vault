@@ -66,6 +66,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
                 .placeholder(R.drawable.folder)
                 .into(holder.thumbnailImageView);
     }
+
     private boolean isSelected(int position) {
         return selectedPositions.contains(position);
     }
@@ -73,6 +74,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
     public int getItemCount() {
         return fileList.size();
     }
+
     private Bitmap getVideoThumbnail(Uri videoUri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -89,6 +91,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
         }
         return null;
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
         ImageView thumbnailImageView,document;
         private TextView audioNameTextView;

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#14141c"
-    tools:context=".FileManager">
+    tools:context=".activities.FileManagerActivity">
 
     <ImageView
         android:id="@+id/arrow"
@@ -16,17 +15,18 @@
         android:layout_weight="1"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/arrow" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:layout_toRightOf="@id/arrow"
-        android:text="File Manager"
         android:fontFamily="@font/poppins_bold"
+        android:text="File Manager"
         android:textColor="#D6D5D5"
-        android:textSize="20dp"
-        />
+        android:textSize="20dp" />
+
     <ImageView
         android:id="@+id/fileAdd"
         android:layout_width="100dp"
@@ -60,129 +60,132 @@
             android:layout_width="200dp"
             android:layout_height="140dp"
             android:src="@drawable/picture" />
+
         <ImageView
             android:id="@+id/videos"
             android:layout_width="wrap_content"
             android:layout_height="140dp"
             android:layout_toRightOf="@id/photos"
             android:src="@drawable/vidoes" />
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:id="@+id/linear1"
-          android:layout_below="@id/videos"
-          >
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Photos"
-              android:gravity="center"
-              android:textStyle="bold"
-              android:textColor="@color/white"
-              android:textSize="16dp"
-              android:layout_marginLeft="8dp"
-              android:layout_weight="1"
-              />
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Videos"
-              android:gravity="center"
-              android:textStyle="bold"
-              android:textColor="@color/white"
-              android:textSize="16dp"
-              android:layout_marginLeft="8dp"
-              android:layout_weight="1"
-              />
-      </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/videos"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Photos"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Videos"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/documents"
             android:layout_width="200dp"
             android:layout_height="140dp"
-            android:layout_marginTop="30dp"
             android:layout_below="@id/linear1"
+            android:layout_marginTop="30dp"
             android:src="@drawable/doc" />
+
         <ImageView
             android:id="@+id/music"
             android:layout_width="200dp"
             android:layout_height="140dp"
-            android:layout_marginTop="30dp"
-          android:layout_toRightOf="@id/documents"
             android:layout_below="@id/linear1"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/documents"
             android:src="@drawable/sound" />
+
         <LinearLayout
+            android:id="@+id/linear2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/linear2"
             android:layout_below="@id/documents"
-            >
+            android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:text="Documents"
-                android:gravity="center"
-                android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textSize="16dp"
-                android:layout_weight="1"
-                />
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Music"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:text="Music"
                 android:textColor="@color/white"
                 android:textSize="16dp"
-                android:layout_weight="1"
-                />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/downloads"
             android:layout_width="200dp"
             android:layout_height="140dp"
-            android:layout_marginTop="30dp"
             android:layout_below="@id/linear2"
+            android:layout_marginTop="30dp"
             android:src="@drawable/download" />
+
         <ImageView
             android:id="@+id/more"
             android:layout_width="200dp"
             android:layout_height="140dp"
+            android:layout_below="@id/linear2"
             android:layout_marginTop="30dp"
             android:layout_toRightOf="@id/documents"
-            android:layout_below="@id/linear2"
             android:src="@drawable/more" />
 
         <LinearLayout
+            android:id="@+id/linear3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/linear3"
             android:layout_below="@id/downloads"
-            >
+            android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:text="Downloads"
-                android:gravity="center"
-                android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textSize="16dp"
-                android:layout_weight="1"
-                />
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="More"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:text="More"
                 android:textColor="@color/white"
                 android:textSize="16dp"
-                android:layout_weight="1"
-                />
+                android:textStyle="bold" />
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

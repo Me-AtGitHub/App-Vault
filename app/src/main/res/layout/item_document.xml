@@ -10,22 +10,24 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="10dp"
-        android:src="@drawable/placeholder" />
+        android:src="@drawable/round_file_present_24" />
+
     <ImageView
         android:id="@+id/DocumentImageView"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/musictick"
         android:visibility="gone" />
+
     <TextView
         android:id="@+id/DocumentText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="15dp"
-        android:textSize="16dp"
+        android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/blue"
-        android:textStyle="bold"
-        android:textAppearance="?android:textAppearanceMedium" />
+        android:textSize="16dp"
+        android:textStyle="bold" />
 
 </LinearLayout>

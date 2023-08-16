@@ -210,6 +210,12 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
             videoAdapter = new VideoAdapter(this, selectedVideoUris);
             binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
             binding.recyclerView.setAdapter(videoAdapter);
+
+            if (selectedVideoUris.isEmpty())
+                binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+            else
+                binding.tvNoFilesYet.setVisibility(View.GONE);
+
         }
 
         binding.arrow.setOnClickListener(new View.OnClickListener() {
@@ -319,6 +325,7 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
         } else {
             Log.d("Files", "File does not exist");
         }
+
     }
 
     private void deleteSelectedVideos() {
@@ -335,6 +342,12 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
         videoAdapter.setSelectedPositions(selectedPositions);
         videoAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedVideoUris.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else
+            binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void restoreSelectedVideos() {
@@ -350,6 +363,11 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
         selectedPositions.clear();
         videoAdapter.setSelectedPositions(selectedPositions);
         updateActionModeTitle();
+
+        if (selectedVideoUris.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else
+            binding.tvNoFilesYet.setVisibility(View.GONE);
     }
 
     private void updateActionModeTitle() {

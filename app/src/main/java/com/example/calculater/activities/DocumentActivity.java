@@ -1,6 +1,7 @@
 package com.example.calculater.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +21,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -32,7 +33,6 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.calculater.FileManager;
 import com.example.calculater.R;
 import com.example.calculater.adapters.DocumentAdapter;
 import com.example.calculater.databinding.ActivityDocumentBinding;
@@ -107,8 +107,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     public void requestPermissionForReadExtertalStorage() {
         try {
             Log.e("permission ", "requested");
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_STORAGE_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -118,8 +117,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     public void requestPermissionForWriteExtertalStorage() {
         try {
             Log.e("permission ", "requested");
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    WRITE_STORAGE_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -134,11 +132,11 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         arow = findViewById(R.id.arrow);
         addDocument = findViewById(R.id.documentAdd);
         recyclerView = findViewById(R.id.recyclerViewDocument);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // click handel
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         } else {
@@ -161,49 +159,41 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
             fileAdapter = new DocumentAdapter(selectedVideoUris, this);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(fileAdapter);
+
+            if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+            else binding.tvNoFilesYet.setVisibility(View.GONE);
         }
 
-        arow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DocumentActivity.this, FileManager.class);
-                startActivity(intent);
-                finish();
+        arow.setOnClickListener(v -> onBackPressed());
 
-            }
-        });
-
-        addDocument.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkPermissionForReadExtertalStorage()) {
-                    if (checkPermissionForWriteExternalStorage()) {
-                        add = true;
-                        Log.e("permission ", "given");
-                    } else {
-                        add = false;
-                        Log.e("permission ", " write not given");
-                        try {
-                            requestPermissionForWriteExtertalStorage();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+        addDocument.setOnClickListener(v -> {
+            if (checkPermissionForReadExtertalStorage()) {
+                if (checkPermissionForWriteExternalStorage()) {
+                    add = true;
+                    Log.e("permission ", "given");
                 } else {
                     add = false;
-                    Log.e("permission ", "not given");
+                    Log.e("permission ", " write not given");
                     try {
-                        requestPermissionForReadExtertalStorage();
+                        requestPermissionForWriteExtertalStorage();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
-                if (add) {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.setType("application/*");
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    startActivityForResult(intent, FILE_REQUEST_CODE);
+            } else {
+                add = false;
+                Log.e("permission ", "not given");
+                try {
+                    requestPermissionForReadExtertalStorage();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (add) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("application/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, FILE_REQUEST_CODE);
             }
         });
 
@@ -233,8 +223,8 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            // Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void toggleSelection(int position) {
@@ -269,6 +259,10 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         fileAdapter.setSelectedPositions(selectedPositions);
         fileAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -304,6 +298,10 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         fileAdapter.setSelectedPositions(selectedPositions);
         fileAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void updateActionModeTitle() {
@@ -319,8 +317,9 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
                 Uri selectedFileUri = data.getData();
                 if (selectedFileUri != null) {
                     saveDataToFile(selectedFileUri);
-                    selectedVideoUris.add(selectedFileUri); // Add the file URI to your list
-                    fileAdapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
+                    int position = selectedVideoUris.size();
+                    selectedVideoUris.add(selectedFileUri);
+                    fileAdapter.notifyItemInserted(position);
                 } else {
                     Toast.makeText(this, "Unable to get file path", Toast.LENGTH_SHORT).show();
                 }
@@ -331,7 +330,6 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
     }
 
-    // handel  function
 
     private void saveDataToFile(Uri selectedVideoUri) {
         String folderName = ".Calculator" + File.separator + "document";
@@ -356,17 +354,22 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         }
 
         // Get the actual file path from the URI
-        String sourceFilePath = getDataColumn(selectedVideoUri);
+
+//        String sourceFilePath = getDataColumn(selectedVideoUri);
+        String sourceFilePath = getRealPathFromUri(this, selectedVideoUri);
         if (sourceFilePath == null) {
             Toast.makeText(this, "Source file path is null", Toast.LENGTH_SHORT).show();
             return;
         }
+
         // Create a temporary file with the original file name
-        File sourceFile = new File(sourceFilePath);
+        File sourceFile = new File(selectedVideoUri.getPath());
         File tempFile = new File(folder.getPath() + File.separator + sourceFile.getName());
+
         if (tempFile.exists()) {
             tempFile.delete();
         }
+
         try {
             // Copy the content of the selected image to the temporary file
             InputStream inputStream = getContentResolver().openInputStream(selectedVideoUri);
@@ -387,7 +390,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
                 Toast.makeText(this, "Source file doesn't exist", Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d("saveDataToFile", "saveDataToFile: " + e.getMessage());
             Toast.makeText(this, "Failed to move the file", Toast.LENGTH_SHORT).show();
         }
     }
@@ -477,7 +480,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         }
 
         String sourceFileName = getFileName(fileUri);
-        String sourceFilePath = fileUri.getPath();
+        String sourceFilePath = getDataColumn(fileUri);
         if (sourceFilePath == null) {
             Toast.makeText(this, "Source file path is null", Toast.LENGTH_SHORT).show();
             return;
@@ -512,6 +515,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         }
     }
 
+    @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String fileName = null;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
@@ -535,7 +539,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
     private Uri getFileUri(File file) {
         Context context = getApplicationContext();
-        String authority = context.getPackageName() + ".TrashActivity";
+        String authority = context.getPackageName() + "activities.TrashActivity";
         // Get the Uri for the file using FileProvider
         return FileProvider.getUriForFile(context, authority, file);
     }
@@ -544,8 +548,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         // Check if the app has permission to delete files
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             // Request the MANAGE_EXTERNAL_STORAGE permission
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    .setData(Uri.parse("package:" + getPackageName()));
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
             return;
         }
@@ -554,8 +557,8 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         ContentResolver contentResolver = getContentResolver();
         int rowsDeleted = contentResolver.delete(fileUri, null, null);
         if (rowsDeleted > 0) {
-            // File deleted successfully
-            // Toast.makeText(this, "Document save successfully", Toast.LENGTH_SHORT).show();
+//            File deleted successfully
+            Toast.makeText(this, "Document save successfully", Toast.LENGTH_SHORT).show();
         } else {
             // Failed to delete the file
             Toast.makeText(this, "Failed to save the document", Toast.LENGTH_SHORT).show();
@@ -577,34 +580,116 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         return filePath;
     }
 
-    private String getDataColumn(Uri uri) {
-        try {
-            String[] projection = {MediaStore.MediaColumns.DATA};
-            String selection = "_id=?";
-            String[] selectionArgs = new String[]{DocumentsContract.getDocumentId(uri).split(":")[1]};
-            Cursor cursor = null;
-            try {
-                cursor = getContentResolver().query(
-                        MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null
-                );
-                if (cursor != null && cursor.moveToFirst()) {
-                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-                    return cursor.getString(columnIndex);
-                }
 
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
+    @Nullable
+    private String getRealPathFromUri(Context context, Uri uri) {
+        String path = null;
+        if (DocumentsContract.isDocumentUri(context, uri)) {
+            String docId = DocumentsContract.getDocumentId(uri);
+            String[] split = docId.split(":");
+            String type = split[0];
+            // This is for checking Main Memory
+
+            if ("primary".equals(type)) {
+                if (split.length > 1) {
+                    path = Environment.getExternalStorageDirectory().toString() + "/" + split[1];
+                } else {
+                    path = Environment.getExternalStorageDirectory().toString() + "/";
+                }
+            } else {
+                path = "storage" + "/" + docId.replace(":", "/");
+            }
+        }
+        return path;
+    }
+
+
+    private String getDataColumn(Uri uri) {
+
+        DocumentsContract.isDocumentUri(this, uri);
+        Cursor cursor = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+
+        try {
+            cursor = getContentResolver().query(uri, proj,
+                    null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return null;
+    }
+
+
+    public void getAllMusicFiles() {
+        try {
+            String[] projection = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DURATION};
+
+            // Display audios in alphabetical order based on their display name.
+            Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
+                    int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                    String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Id : => ").append(id).append("Title : => ").append(title).append("duration : => ").append(duration).append("artist : => ").append(artist);
+
+
+                    Log.d("getAllMusicFiles", "getAllMusicFiles: " + sb);
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            Log.d("getAllMusicFiles", "getAllMusicFiles: " + e.getLocalizedMessage());
+        }
+
+    }
+
+    protected void getAllDocuments() {
+        try {
+
+            String[] projection = {MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.MIME_TYPE, MediaStore.Files.FileColumns.DATE_ADDED, MediaStore.Files.FileColumns.DATE_MODIFIED, MediaStore.Files.FileColumns.DISPLAY_NAME, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.SIZE,};
+
+            String mime = "application/pdf";
+
+            String whereClause = MediaStore.Files.FileColumns.MIME_TYPE + " IN ('" + mime + "')" + " OR " + MediaStore.Files.FileColumns.MIME_TYPE + " LIKE 'application/vnd%'";
+            String orderBy = MediaStore.Files.FileColumns.SIZE + " DESC";
+            Cursor cursor = getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, whereClause, null, orderBy);
+
+            if (cursor != null) {
+                int idCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
+                int mimeCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
+                int addedCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED);
+                int modifiedCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
+                int nameCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
+                int titleCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
+                int sizeCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
+
+                if (cursor.moveToFirst()) {
+                    do {
+                        Uri fileUri = Uri.withAppendedPath(MediaStore.Files.getContentUri("external"), cursor.getString(idCol));
+                        String mimeType = cursor.getString(mimeCol);
+                        long dateAdded = cursor.getLong(addedCol);
+                        long dateModified = cursor.getLong(modifiedCol);
+
+                        Log.d("getAllDocuments", "getAllDocuments: " + fileUri + " " + mimeType + " " + dateAdded + " " + dateModified);
+                    } while (cursor.moveToNext());
                 }
             }
         } catch (Exception e) {
-
         }
-        return null;
     }
+
 
 }

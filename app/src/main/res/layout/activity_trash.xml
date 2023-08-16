@@ -12,29 +12,56 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="1"
         android:src="@drawable/arrow"
         app:tint="@color/white" />
-   <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/arrow"
-       android:layout_marginTop="8dp"
-       android:layout_marginLeft="8dp"
-       android:layout_marginRight="8dp"
-    >
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/trashRecyclerView"
-        android:layout_below="@id/arrow"
 
-        />
-    </ScrollView>
-     </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@id/arrow"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Trash"
+        android:textColor="#D6D5D5"
+        android:textSize="24dp"
+        android:textStyle="bold" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/arrow"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/trashRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/arrow"
+
+                />
+        </ScrollView>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvNoFilesYet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="No files yet"
+        android:textColor="#D6D5D5"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
 </RelativeLayout>

@@ -26,4 +26,5 @@
         <item>Nick Name</item>
     </string-array>
     <string name="spinner_position_error">Please select different positions for the spinners.</string>
+    <string name="photos">Photos</string>
 </resources>

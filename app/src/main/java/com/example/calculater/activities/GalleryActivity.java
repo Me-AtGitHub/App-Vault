@@ -21,7 +21,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.calculater.R;
 import com.example.calculater.adapters.ImageAdapter;
@@ -83,6 +82,7 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
             imageAdapter.setSelectedPositions(selectedPositions);
         }
     };
+
     private Uri newImageUri = null;
 
     public boolean checkPermissionForReadExtertalStorage() {
@@ -167,7 +167,13 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
             Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
 
+        if (selectedVideoUris.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else
+            binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
+
 
     // Method to handle deletion of selected images
     private void toggleSelection(int position) {
@@ -201,6 +207,8 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         imageAdapter.setSelectedPositions(selectedPositions);
         imageAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+
     }
 
 
@@ -223,6 +231,12 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
                 Log.d("Files", "File does not exist");
             }
         }
+
+        if (selectedVideoUris.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else
+            binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void restoreSelectedVideos() {
@@ -239,6 +253,11 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         imageAdapter.setSelectedPositions(selectedPositions);
         updateActionModeTitle();
         imageAdapter.notifyDataSetChanged();
+        if (selectedVideoUris.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else
+            binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void updateActionModeTitle() {

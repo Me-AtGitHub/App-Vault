@@ -1,6 +1,7 @@
-package com.example.calculater;
+package com.example.calculater.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,27 +19,17 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.calculater.activities.DocumentActivity;
-import com.example.calculater.activities.DownloadActivity;
-import com.example.calculater.activities.GalleryActivity;
-import com.example.calculater.activities.HomeActivity;
-import com.example.calculater.activities.MoreActivity;
-import com.example.calculater.activities.MusicActivity;
-import com.example.calculater.activities.VideosActivity;
+import com.example.calculater.R;
 import com.example.calculater.adapters.FileAdapter;
+import com.example.calculater.databinding.ActivityFileManagerBinding;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,18 +41,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FileManager extends AppCompatActivity {
+public class FileManagerActivity extends BaseActivity<ActivityFileManagerBinding> {
+
     // Destination folder path
     private static final int FILE_REQUEST_CODE = 1;
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 41;
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
-    ImageView arow, idfile;
-    ImageView photo, video, document, music, download, more;
-    TextView textView;
     boolean add = false;
     private List<Uri> selectedVideoUris;
     private Uri newImageUri = null;
-    private RecyclerView recyclerView;
     private FileAdapter fileAdapter;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
@@ -131,109 +119,79 @@ public class FileManager extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    ActivityFileManagerBinding getLayout() {
+        return ActivityFileManagerBinding.inflate(getLayoutInflater());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_file_manager);
-        arow = findViewById(R.id.arrow);
-        idfile = findViewById(R.id.fileAdd);
-        recyclerView = findViewById(R.id.recyclerView);
-        photo = findViewById(R.id.photos);
-        video = findViewById(R.id.videos);
-        document = findViewById(R.id.documents);
-        music = findViewById(R.id.music);
-        download = findViewById(R.id.downloads);
-        more = findViewById(R.id.more);
 
 
-        photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileManager.this, GalleryActivity.class);
-                startActivity(intent);
-            }
+        binding.photos.setOnClickListener(v -> {
+            Intent intent = new Intent(FileManagerActivity.this, GalleryActivity.class);
+            startActivity(intent);
         });
-        video.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileManager.this, VideosActivity.class);
-                startActivity(intent);
-            }
+
+        binding.videos.setOnClickListener(v -> {
+            Intent intent = new Intent(FileManagerActivity.this, VideosActivity.class);
+            startActivity(intent);
         });
-        document.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileManager.this, DocumentActivity.class);
-                startActivity(intent);
-            }
+
+        binding.documents.setOnClickListener(v -> {
+            Intent intent = new Intent(FileManagerActivity.this, DocumentActivity.class);
+            startActivity(intent);
         });
-        music.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileManager.this, MusicActivity.class);
-                startActivity(intent);
-            }
+
+        binding.music.setOnClickListener(v -> {
+            Intent intent = new Intent(FileManagerActivity.this, MusicActivity.class);
+            startActivity(intent);
         });
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileManager.this, DownloadActivity.class);
-                startActivity(intent);
-            }
+
+        binding.downloads.setOnClickListener(v -> {
+            Intent intent = new Intent(FileManagerActivity.this, DownloadActivity.class);
+            startActivity(intent);
         });
-        more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileManager.this, MoreActivity.class);
-                startActivity(intent);
-            }
+
+        binding.more.setOnClickListener(v -> {
+            Intent intent = new Intent(FileManagerActivity.this, MoreActivity.class);
+            startActivity(intent);
         });
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // back to home button
-        arow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-                /*Intent intent = new Intent(FileManager.this, HomeActivity.class);
-                startActivity(intent);
-                finish();*/
-
-            }
+        binding.arrow.setOnClickListener(v -> {
+            onBackPressed();
         });
-        idfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.fileAdd.setOnClickListener(v -> {
 
-                if (checkPermissionForReadExtertalStorage()) {
-                    if (checkPermissionForWriteExternalStorage()) {
-                        add = true;
-                        Log.e("permission ", "given");
-                    } else {
-                        add = false;
-                        Log.e("permission ", " write not given");
-                        try {
-                            requestPermissionForWriteExtertalStorage();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+            if (checkPermissionForReadExtertalStorage()) {
+                if (checkPermissionForWriteExternalStorage()) {
+                    add = true;
+                    Log.e("permission ", "given");
                 } else {
                     add = false;
-                    Log.e("permission ", "not given");
+                    Log.e("permission ", " write not given");
                     try {
-                        requestPermissionForReadExtertalStorage();
+                        requestPermissionForWriteExtertalStorage();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
-                if (add) {
-                 /*   Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(i, 1);*/
-                    openFileManager();
+            } else {
+                add = false;
+                Log.e("permission ", "not given");
+                try {
+                    requestPermissionForReadExtertalStorage();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-                //openFileManager();
+            }
+            if (add) {
+                openFileManager();
             }
         });
 
@@ -257,8 +215,8 @@ public class FileManager extends AppCompatActivity {
                 //Toast.makeText(this, "No File Add File ", Toast.LENGTH_SHORT).show();
             }
             fileAdapter = new FileAdapter(selectedVideoUris, this);
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-            recyclerView.setAdapter(fileAdapter);
+            binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            binding.recyclerView.setAdapter(fileAdapter);
 
         }
         selectedPositions = new HashSet<>();
@@ -528,6 +486,7 @@ public class FileManager extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String fileName = null;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
@@ -590,7 +549,6 @@ public class FileManager extends AppCompatActivity {
         }
         return null;
     }
-
 
 }
 

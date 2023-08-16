@@ -31,7 +31,6 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.calculater.FileManager;
 import com.example.calculater.R;
 import com.example.calculater.adapters.DownloadAdapter;
 import com.example.calculater.databinding.ActivityMoreBinding;
@@ -137,7 +136,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
         arow1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MoreActivity.this, FileManager.class);
+                Intent intent = new Intent(MoreActivity.this, FileManagerActivity.class);
                 MoreActivity.this.finish();
                 startActivity(intent);
             }

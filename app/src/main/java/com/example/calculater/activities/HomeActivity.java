@@ -2,9 +2,7 @@ package com.example.calculater.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
-import com.example.calculater.FileManager;
 import com.example.calculater.databinding.ActivityHomeBinding;
 
 public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
@@ -19,7 +17,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         super.onCreate(savedInstanceState);
 
         binding.fileManager.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, FileManager.class);
+            Intent intent = new Intent(HomeActivity.this, FileManagerActivity.class);
             startActivity(intent);
         });
         binding.setting.setOnClickListener(v -> {
@@ -39,5 +37,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             startActivity(intent);
         });
     }
+
 
 }

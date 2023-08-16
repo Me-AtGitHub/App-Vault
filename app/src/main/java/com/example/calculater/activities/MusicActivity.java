@@ -31,7 +31,6 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.calculater.FileManager;
 import com.example.calculater.R;
 import com.example.calculater.adapters.FileAdapter;
 import com.example.calculater.adapters.MusicAdapter;
@@ -205,9 +204,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         arow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MusicActivity.this, FileManager.class);
-                startActivity(intent);
-                finish();
+                onBackPressed();
             }
         });
 

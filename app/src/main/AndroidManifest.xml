@@ -66,7 +66,7 @@
             android:name=".activities.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".FileManager"
+            android:name=".activities.FileManagerActivity"
             android:exported="false" />
         <activity
             android:name=".activities.HomeActivity"

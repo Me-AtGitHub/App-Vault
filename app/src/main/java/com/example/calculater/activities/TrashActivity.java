@@ -3,7 +3,6 @@ package com.example.calculater.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -123,6 +122,11 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
             binding.trashRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             trashAdapter = new TrashAdapter(selectedTrash);
             binding.trashRecyclerView.setAdapter(trashAdapter);
+
+            if (selectedTrash.isEmpty())
+                binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+            else binding.tvNoFilesYet.setVisibility(View.GONE);
+
         }
         selectedPositions = new HashSet<>();
         try {
@@ -200,6 +204,11 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
         trashAdapter.setSelectedPositions(selectedPositions);
         trashAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedTrash.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void restoreSelectedVideos() {
@@ -216,6 +225,11 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
         trashAdapter.setSelectedPositions(selectedPositions);
         trashAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedTrash.isEmpty())
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void updateActionModeTitle() {

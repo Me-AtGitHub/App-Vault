@@ -31,7 +31,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.calculater.FileManager;
 import com.example.calculater.R;
 import com.example.calculater.adapters.DownloadAdapter;
 import com.example.calculater.databinding.ActivityDownloadBinding;
@@ -182,7 +181,7 @@ public class DownloadActivity extends BaseActivity<ActivityDownloadBinding> {
         arow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DownloadActivity.this, FileManager.class);
+                Intent intent = new Intent(DownloadActivity.this, FileManagerActivity.class);
                 startActivity(intent);
                 finish();
             }
