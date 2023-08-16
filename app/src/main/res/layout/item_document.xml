@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/DocumentFile"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/placeholder" />
+    <ImageView
+        android:id="@+id/DocumentImageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/musictick"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/DocumentText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="15dp"
+        android:textSize="16dp"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        android:textAppearance="?android:textAppearanceMedium" />
+
+</LinearLayout>

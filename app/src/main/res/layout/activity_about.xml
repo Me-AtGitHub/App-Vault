@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#14141c"
+    tools:context=".activities.HelpFeedbackActivity">
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginTop="10dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/arrow" />
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Calculator"
+    android:textSize="22dp"
+    android:layout_marginTop="50dp"
+    android:textColor="@color/blue"
+    android:layout_marginLeft="10dp"
+    android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/white"
+        android:layout_marginRight="8dp"
+        android:text="A calculator is a device that performs arithmetic
+        operations on numbers. Basic calculators can do only addition,
+         subtraction, multiplication and division mathematical calculations"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="The evolution of the calculator"
+        android:textSize="22dp"
+      android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/blue"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="8dp"
+        android:textColor="@color/white"
+        android:text="Most calculators these days require electricity to operate or
+        are battery-powered calculators. Calculators work by performing programmed functions
+         based on numerical inputs.
+Before the electronic calculator (circa 1970), a more primitive calculator,
+the slide rule, was commonly used. It consisted of a slat of wood called the
+slide that could be moved in and out of a reinforced pair of slats. Both
+the slide and the outer pair of slats had calibrated numerical scales."/>
+
+</LinearLayout>

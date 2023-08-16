@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Delete"
+        android:id="@+id/actionDelete"
+        android:icon="@android:drawable/ic_delete"
+        app:showAsAction="ifRoom" />
+    <item
+        android:title="Restore File"
+        android:id="@+id/restore"
+     android:icon="@drawable/restore"
+        app:showAsAction="ifRoom" />
+</menu>
