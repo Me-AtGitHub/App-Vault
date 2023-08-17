@@ -10,23 +10,34 @@
         android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:layout_weight="1"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/arrow" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/arrow"
+        android:layout_toEndOf="@id/arrow"
         android:fontFamily="@font/poppins_bold"
         android:text="More"
         android:textColor="#D6D5D5"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/moreRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/arrow"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:clipChildren="false"
+        android:clipToPadding="false" />
 
     <ImageView
         android:id="@+id/moreAdd"
@@ -34,27 +45,9 @@
         android:layout_height="100dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_weight="1"
+        android:elevation="2dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:src="@drawable/adfile" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/moreAdd"
-        android:layout_below="@id/arrow"
-        android:layout_margin="14dp"
-        android:orientation="vertical">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/moreRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </ScrollView>
-    </RelativeLayout>
 
 </RelativeLayout>

@@ -7,14 +7,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -26,9 +24,9 @@ import com.example.calculater.R;
 import com.example.calculater.adapters.ImageAdapter;
 import com.example.calculater.databinding.ActivityGalleryBinding;
 import com.example.calculater.fragments.ImageFragment;
-import com.example.calculater.utils.FileManagerUtil;
+import com.example.calculater.utils.CommonFunctions;
+import com.example.calculater.utils.FileType;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +38,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 41;
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
     boolean add = false;
-    private FileManagerUtil fileManagerUtil = null;
     private List<Uri> selectedVideoUris = new ArrayList<Uri>();
     private ImageAdapter imageAdapter;
     private ActionMode actionMode;
@@ -68,7 +65,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
                 return true;
             } else if (item.getItemId() == R.id.restore) {
                 restoreSelectedVideos();
-                //restoreFile((newImageUri));
                 mode.finish();
             }
 
@@ -97,7 +93,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
 
     public void requestPermissionForReadExtertalStorage() {
         try {
-            Log.e("permission ", "requested");
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +102,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
 
     public void requestPermissionForWriteExtertalStorage() {
         try {
-            Log.e("permission ", "requested");
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,10 +118,9 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fileManagerUtil = FileManagerUtil.getInstance(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        selectedVideoUris.addAll(fileManagerUtil.getSavedPhotos());
+        selectedVideoUris.addAll(CommonFunctions.getFiles(FileType.IMAGE));
         imageAdapter = new ImageAdapter(this, selectedVideoUris);
         binding.recyclerViewGallery.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recyclerViewGallery.setAdapter(imageAdapter);
@@ -164,18 +157,14 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
             });
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
 
         if (selectedVideoUris.isEmpty())
             binding.tvNoFilesYet.setVisibility(View.VISIBLE);
         else
             binding.tvNoFilesYet.setVisibility(View.GONE);
-
     }
 
-
-    // Method to handle deletion of selected images
     private void toggleSelection(int position) {
         if (selectedPositions.contains(position)) {
             selectedPositions.remove(position);
@@ -199,7 +188,7 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         for (int position : selectedPositions) {
             if (((selectedVideoUris.size() - 1) >= position) && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
-                fileManagerUtil.moveFile(selectedVideoUris.get(position));
+                CommonFunctions.moveToTrash(this, selectedVideoUris.get(position));
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -208,44 +197,16 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         imageAdapter.notifyDataSetChanged();
         updateActionModeTitle();
 
-
-    }
-
-
-    public void deleteItem(int position) {
-        Uri fileUri = selectedVideoUris.get(position);
-        // Get the file path from the Uri
-        String filePath = fileUri.getPath();
-        // Create a File object using the file path
-        File fileToDelete = null;
-        if (filePath != null) {
-            fileToDelete = new File(filePath);
-            if (fileToDelete.exists()) {
-                // Delete the file
-                if (fileToDelete.delete()) {
-                    Log.d("Files", "File deleted successfully");
-                } else {
-                    Log.d("Files", "Failed to delete file");
-                }
-            } else {
-                Log.d("Files", "File does not exist");
-            }
-        }
-
-        if (selectedVideoUris.isEmpty())
-            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
-        else
-            binding.tvNoFilesYet.setVisibility(View.GONE);
 
     }
 
     private void restoreSelectedVideos() {
         List<Uri> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
-            if (selectedVideoUris.size() >= position) {
+            if (selectedVideoUris.size() >= position && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
-                fileManagerUtil.restoreFile(selectedVideoUris.get(position));
-                deleteItem(position);
+                CommonFunctions.recoverFile(this, selectedVideoUris.get(position), FileType.IMAGE);
+                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -257,7 +218,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
             binding.tvNoFilesYet.setVisibility(View.VISIBLE);
         else
             binding.tvNoFilesYet.setVisibility(View.GONE);
-
     }
 
     private void updateActionModeTitle() {
@@ -265,7 +225,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         actionMode.setTitle(String.valueOf(selectedCount));
     }
 
-    /// onActivityResult code
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -281,27 +240,15 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
                     int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     cursor.moveToFirst();
                     cursor.close();
-                    newImageUri = fileManagerUtil.saveDataToFile(selectedImageUri, FileManagerUtil.STORAGE_PATH_PHOTO);
+                    newImageUri = CommonFunctions.saveFile(this, selectedImageUri, FileType.IMAGE);
                     int position = selectedVideoUris.size();
                     selectedVideoUris.add(newImageUri);
                     imageAdapter.notifyItemInserted(position);
+                    binding.tvNoFilesYet.setVisibility(View.GONE);
                 }
             } catch (Exception e) {
             }
         }
-    }
-
-    private String getDataColumn(Uri uri) {
-        String[] projection = {MediaStore.MediaColumns.DATA};
-
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
-            return filePath;
-        }
-        return null;
     }
 
     @Override
@@ -309,8 +256,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
 
         if (view.getId() == R.id.arrow) {
             onBackPressed();
-//            startActivity(new Intent(GalleryActivity.this, HomeActivity.class));
-//            finish();
         } else if (view.getId() == R.id.galleryAdd) {
             if (checkPermissionForReadExtertalStorage()) {
                 if (checkPermissionForWriteExternalStorage()) {
@@ -335,8 +280,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, GALLERY_REQUEST_CODE);
             }
-        } else {
-
         }
     }
 
