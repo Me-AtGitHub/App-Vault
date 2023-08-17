@@ -1,6 +1,7 @@
 package com.example.calculater.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.calculater.R;
 import com.example.calculater.adapters.DownloadAdapter;
 import com.example.calculater.databinding.ActivityMoreBinding;
+import com.example.calculater.utils.FileManagerUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,12 +48,16 @@ import java.util.List;
 import java.util.Set;
 
 public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
+
+
+    private static final String TAG = "MORE_ACTIVITY";
     // Destination folder path
     private static final int FILE_REQUEST_CODE = 1;
     ImageView arow1, AddMore;
     ImageView photo, video, document, music, download, more;
     TextView textView;
     boolean add = false;
+    private FileManagerUtil fileManagerUtil;
     private List<Uri> selectedVideoUris;
     private Uri newImageUri = null;
     private RecyclerView recyclerView;
@@ -121,6 +127,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
         AddMore = findViewById(R.id.moreAdd);
         recyclerView = findViewById(R.id.moreRecyclerView);
 
+        fileManagerUtil = FileManagerUtil.getInstance(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         onclickButton();
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -141,14 +148,12 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
                 startActivity(intent);
             }
         });
-        AddMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("*/*");
-                //intent = getCustomFileChooserIntent(DOC, PDF, IMAGE,AUDIO,TEXT,XLS,DOCX);
-                startActivityForResult(intent, FILE_REQUEST_CODE);
-            }
+        AddMore.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("*/*");
+            String[] mimetypes = {"image/*", "video/*", "audio/*", "application/*"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+            startActivityForResult(intent, FILE_REQUEST_CODE);
         });
 
     }
@@ -285,21 +290,28 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
         actionMode.setTitle(String.valueOf(selectedCount));
     }
 
+
     // Result on Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+
             Uri selectedFileUri = data.getData();
-            String filePath = getDataColumn(selectedFileUri);
-            if (filePath != null) {
-                // Handle the file path as needed
-                saveDataToFile(selectedFileUri);
-                selectedFileUri = newImageUri;
-                selectedVideoUris.add(selectedFileUri); // Add the file URI to your list
-                fileAdapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
+            String mimeType = getContentResolver().getType(selectedFileUri);
+            Log.d(TAG, "mime type : " + mimeType);
+
+            if (mimeType.startsWith("video/")) {
+
+            } else if (mimeType.startsWith("image/")) {
+
+            } else if (mimeType.startsWith("audio/")) {
+
+            } else if (mimeType.startsWith("application/")) {
+
             } else {
-                Toast.makeText(this, "Unable to get file path", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "File not supported", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -480,6 +492,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
         }
     }
 
+    @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String fileName = null;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
@@ -503,7 +516,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
 
     private Uri getFileUri(File file) {
         Context context = getApplicationContext();
-        String authority = context.getPackageName() + ".TrashActivity";
+        String authority = context.getPackageName() + ".activities.TrashActivity";
         // Get the Uri for the file using FileProvider
         return FileProvider.getUriForFile(context, authority, file);
     }

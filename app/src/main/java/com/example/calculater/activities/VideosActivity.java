@@ -402,6 +402,13 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
                         selectedVideoUris.add(selectedVideoUri);
                         videoAdapter.notifyItemInserted(position);
                     }
+
+
+                    if (selectedVideoUris.isEmpty())
+                        binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+                    else
+                        binding.tvNoFilesYet.setVisibility(View.GONE);
+                    
                 }
             } catch (Exception e) {
 

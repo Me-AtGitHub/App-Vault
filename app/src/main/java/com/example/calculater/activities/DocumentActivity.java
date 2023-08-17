@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -36,12 +34,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.calculater.R;
 import com.example.calculater.adapters.DocumentAdapter;
 import com.example.calculater.databinding.ActivityDocumentBinding;
+import com.example.calculater.utils.FileHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,16 +50,16 @@ import java.util.Set;
 public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 41;
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
+    private final int FILE_REQUEST_CODE = 1;
     ImageView arow, addDocument;
     boolean add = false;
     private RecyclerView recyclerView;
     private List<Uri> selectedVideoUris;
-    private Uri newImageUri = null;
+    private Uri newDocUri = null;
     private DocumentAdapter fileAdapter;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
-    private int FILE_REQUEST_CODE = 1;
-    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
@@ -250,8 +250,6 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
             selectedVideos.add(selectedVideoUris.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MoveFile(selectedVideoUris.get(position));
-
-
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -312,14 +310,27 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     // OnResult Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
                 Uri selectedFileUri = data.getData();
+
+
                 if (selectedFileUri != null) {
                     saveDataToFile(selectedFileUri);
+                    Log.d("saveDataToFile", "onActivityResult: uri" + newDocUri);
                     int position = selectedVideoUris.size();
-                    selectedVideoUris.add(selectedFileUri);
+                    Log.d("saveDataToFile", "onActivityResult: position" + position);
+                    selectedVideoUris.add(newDocUri);
                     fileAdapter.notifyItemInserted(position);
+
+                    if (selectedVideoUris.isEmpty())
+                        binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+                    else binding.tvNoFilesYet.setVisibility(View.GONE);
+
+                    Log.d("saveDataToFile", "onActivityResult: position" + selectedVideoUris.size());
+
+
                 } else {
                     Toast.makeText(this, "Unable to get file path", Toast.LENGTH_SHORT).show();
                 }
@@ -354,26 +365,28 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         }
 
         // Get the actual file path from the URI
-
-//        String sourceFilePath = getDataColumn(selectedVideoUri);
-        String sourceFilePath = getRealPathFromUri(this, selectedVideoUri);
+        String sourceFilePath = FileHelper.getRealPathFromURI(this, selectedVideoUri);
+        Log.d("actualFilePath", "saveDataToFile: " + sourceFilePath);
         if (sourceFilePath == null) {
-            Toast.makeText(this, "Source file path is null", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Source path is null", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create a temporary file with the original file name
-        File sourceFile = new File(selectedVideoUri.getPath());
-        File tempFile = new File(folder.getPath() + File.separator + sourceFile.getName());
+        File sourceFile = new File(sourceFilePath);
+        Log.d("actualFilePath", "saveDataToFile: file exists " + sourceFile.exists());
 
+
+        File tempFile = new File(folder.getPath() + File.separator + sourceFile.getName().replace(":", "_"));
         if (tempFile.exists()) {
             tempFile.delete();
         }
 
         try {
+
             // Copy the content of the selected image to the temporary file
             InputStream inputStream = getContentResolver().openInputStream(selectedVideoUri);
-            OutputStream outputStream = new FileOutputStream(tempFile);
+            OutputStream outputStream = Files.newOutputStream(tempFile.toPath());
+
             byte[] buffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -384,7 +397,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
             // Delete the source file
             if (sourceFile.exists()) {
-                newImageUri = getFileUri(tempFile);
+                newDocUri = getFileUri(tempFile);
                 deleteFiles(getFileUri(sourceFile));
             } else {
                 Toast.makeText(this, "Source file doesn't exist", Toast.LENGTH_SHORT).show();
@@ -393,6 +406,8 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
             Log.d("saveDataToFile", "saveDataToFile: " + e.getMessage());
             Toast.makeText(this, "Failed to move the file", Toast.LENGTH_SHORT).show();
         }
+
+        Log.d("saveDataToFile", "saveDataToFile: Done ");
     }
 
     private void restoreVideo(Uri videoUri) {
@@ -417,6 +432,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         }
 
         String sourceFilePath = getFileName(videoUri);
+        Log.d("sourceFilePath", "restoreVideo: " + sourceFilePath);
         if (sourceFilePath == null) {
             Toast.makeText(this, "Source file path is null", Toast.LENGTH_SHORT).show();
             return;
@@ -480,7 +496,8 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
         }
 
         String sourceFileName = getFileName(fileUri);
-        String sourceFilePath = getDataColumn(fileUri);
+        String sourceFilePath = FileHelper.getRealPathFromURI(this, fileUri);
+
         if (sourceFilePath == null) {
             Toast.makeText(this, "Source file path is null", Toast.LENGTH_SHORT).show();
             return;
@@ -539,7 +556,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
     private Uri getFileUri(File file) {
         Context context = getApplicationContext();
-        String authority = context.getPackageName() + "activities.TrashActivity";
+        String authority = context.getPackageName() + ".activities.TrashActivity";
         // Get the Uri for the file using FileProvider
         return FileProvider.getUriForFile(context, authority, file);
     }
@@ -581,48 +598,14 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     }
 
 
-    @Nullable
-    private String getRealPathFromUri(Context context, Uri uri) {
-        String path = null;
-        if (DocumentsContract.isDocumentUri(context, uri)) {
-            String docId = DocumentsContract.getDocumentId(uri);
-            String[] split = docId.split(":");
-            String type = split[0];
-            // This is for checking Main Memory
-
-            if ("primary".equals(type)) {
-                if (split.length > 1) {
-                    path = Environment.getExternalStorageDirectory().toString() + "/" + split[1];
-                } else {
-                    path = Environment.getExternalStorageDirectory().toString() + "/";
-                }
-            } else {
-                path = "storage" + "/" + docId.replace(":", "/");
-            }
-        }
-        return path;
-    }
-
-
     private String getDataColumn(Uri uri) {
-
-        DocumentsContract.isDocumentUri(this, uri);
-        Cursor cursor = null;
-        String[] proj = {MediaStore.Images.Media.DATA};
-
-        try {
-            cursor = getContentResolver().query(uri, proj,
-                    null, null, null);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                final int index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-                return cursor.getString(index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+            return filePath;
         }
-
         return null;
     }
 
@@ -641,11 +624,8 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
                     int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
                     String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Id : => ").append(id).append("Title : => ").append(title).append("duration : => ").append(duration).append("artist : => ").append(artist);
 
-
-                    Log.d("getAllMusicFiles", "getAllMusicFiles: " + sb);
+                    Log.d("getAllMusicFiles", "getAllMusicFiles: " + "Id : => " + id + "Title : => " + title + "duration : => " + duration + "artist : => " + artist);
                 } while (cursor.moveToNext());
                 cursor.close();
             }

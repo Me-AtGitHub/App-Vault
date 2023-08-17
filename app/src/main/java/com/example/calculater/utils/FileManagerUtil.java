@@ -156,11 +156,13 @@ public class FileManagerUtil {
         }
 
         try {
+
+
             InputStream inputStream = mContext.getContentResolver().openInputStream(selectedImageUri);
             OutputStream outputStream = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 outputStream = Files.newOutputStream(tempFile.toPath());
-            } else new FileOutputStream(tempFile);
+            } else outputStream = new FileOutputStream(tempFile);
 
             byte[] buffer = new byte[1024];
             int bytesRead;

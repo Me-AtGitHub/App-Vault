@@ -150,10 +150,10 @@ public class FileManagerActivity extends BaseActivity<ActivityFileManagerBinding
             startActivity(intent);
         });
 
-        binding.downloads.setOnClickListener(v -> {
+       /* binding.downloads.setOnClickListener(v -> {
             Intent intent = new Intent(FileManagerActivity.this, DownloadActivity.class);
             startActivity(intent);
-        });
+        });*/
 
         binding.more.setOnClickListener(v -> {
             Intent intent = new Intent(FileManagerActivity.this, MoreActivity.class);
@@ -166,7 +166,8 @@ public class FileManagerActivity extends BaseActivity<ActivityFileManagerBinding
         binding.arrow.setOnClickListener(v -> {
             onBackPressed();
         });
-        binding.fileAdd.setOnClickListener(v -> {
+
+        /*binding.fileAdd.setOnClickListener(v -> {
 
             if (checkPermissionForReadExtertalStorage()) {
                 if (checkPermissionForWriteExternalStorage()) {
@@ -193,7 +194,7 @@ public class FileManagerActivity extends BaseActivity<ActivityFileManagerBinding
             if (add) {
                 openFileManager();
             }
-        });
+        });*/
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         } else {
@@ -287,8 +288,9 @@ public class FileManagerActivity extends BaseActivity<ActivityFileManagerBinding
 
     private void openFileManager() {
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("*/*"); // Set the MIME type to select any file
-        //intent = Intent.createChooser(intent, "Choose a file");
+        intent.setType("*/*");
+        String[] mimetypes = {"image/*", "video/*", "audio/*", "application/*"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
         startActivityForResult(intent, FILE_REQUEST_CODE);
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.calculater.R;
+import com.example.calculater.utils.FileHelper;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -25,13 +27,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHold
     private List<Uri> fileList;
     private Context context;
     private RecyclerView recyclerView;
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-
-        boolean onItemLongClick(int position);
-    }
-
     private FileAdapter.OnItemClickListener listener;
     private Set<Integer> selectedPositions;
 
@@ -58,19 +53,23 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHold
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_audio, parent, false);
         return new MusicAdapter.FileViewHolder(view);
     }
+
     public void onBindViewHolder(@NonNull MusicAdapter.FileViewHolder holder, int position) {
         Uri audioUri = fileList.get(position);
-        String audioTitle = audioUri.getLastPathSegment();
+        Log.d("onBindViewHolder", "onBindViewHolder: "+audioUri);
+        String audioTitle = FileHelper.getFileName(audioUri, holder.audioNameTextView.getContext());
         holder.audioNameTextView.setText(audioTitle);
         Glide.with(context)
                 .load(audioUri)
                 .placeholder(R.drawable.music)
                 .into(holder.thumbnailImageView);
     }
+
     @Override
     public int getItemCount() {
         return fileList.size();
     }
+
     private Bitmap getVideoThumbnail(Uri videoUri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -87,17 +86,26 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHold
         }
         return null;
     }
-    public class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
-        ImageView thumbnailImageView,trick;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+
+        boolean onItemLongClick(int position);
+    }
+
+    public class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        ImageView thumbnailImageView, trick;
         private TextView audioNameTextView;
+
         public FileViewHolder(View itemView) {
             super(itemView);
             thumbnailImageView = itemView.findViewById(R.id.MusicFile);
-            trick=itemView.findViewById(R.id.tickImageView);
+            trick = itemView.findViewById(R.id.tickImageView);
             audioNameTextView = itemView.findViewById(R.id.musicText);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
+
         @Override
         public void onClick(View v) {
             if (listener != null) {
@@ -105,14 +113,15 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHold
                 trick.setVisibility(View.GONE);
             }
         }
+
         @Override
         public boolean onLongClick(View v) {
             if (listener != null) {
-                thumbnailImageView.setVisibility( View.VISIBLE);
+                thumbnailImageView.setVisibility(View.VISIBLE);
                 trick.setVisibility(View.VISIBLE);
                 return listener.onItemLongClick(getAdapterPosition());
-            }else {
-                thumbnailImageView.setVisibility( View.VISIBLE);
+            } else {
+                thumbnailImageView.setVisibility(View.VISIBLE);
                 trick.setVisibility(View.GONE);
             }
             return false;

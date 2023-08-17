@@ -178,46 +178,40 @@ public class DownloadActivity extends BaseActivity<ActivityDownloadBinding> {
             recyclerView.setAdapter(fileAdapter);
 
         }
-        arow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DownloadActivity.this, FileManagerActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        arow.setOnClickListener(v -> {
+            Intent intent = new Intent(DownloadActivity.this, FileManagerActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        addDownLoad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        addDownLoad.setOnClickListener(v -> {
 
-                if (checkPermissionForReadExtertalStorage()) {
-                    if (checkPermissionForWriteExternalStorage()) {
-                        add = true;
-                        Log.e("permission ", "given");
-                    } else {
-                        add = false;
-                        Log.e("permission ", " write not given");
-                        try {
-                            requestPermissionForWriteExtertalStorage();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+            if (checkPermissionForReadExtertalStorage()) {
+                if (checkPermissionForWriteExternalStorage()) {
+                    add = true;
+                    Log.e("permission ", "given");
                 } else {
                     add = false;
-                    Log.e("permission ", "not given");
+                    Log.e("permission ", " write not given");
                     try {
-                        requestPermissionForReadExtertalStorage();
+                        requestPermissionForWriteExtertalStorage();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
-                if (add) {
-                    Intent intent = new Intent(Intent.ACTION_PICK);
-                    intent.setType("*/*");
-                    startActivityForResult(intent, FILE_REQUEST_CODE);
+            } else {
+                add = false;
+                Log.e("permission ", "not given");
+                try {
+                    requestPermissionForReadExtertalStorage();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (add) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("*/*");
+                startActivityForResult(intent, FILE_REQUEST_CODE);
             }
         });
 
@@ -590,11 +584,6 @@ public class DownloadActivity extends BaseActivity<ActivityDownloadBinding> {
         }
         return null;
     }
-    /*@Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent i = new Intent(this, FileManager.class);
-        startActivity(i);
-        finish();
-    }*/
+
+
 }

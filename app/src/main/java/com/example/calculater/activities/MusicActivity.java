@@ -1,6 +1,7 @@
 package com.example.calculater.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -35,6 +36,7 @@ import com.example.calculater.R;
 import com.example.calculater.adapters.FileAdapter;
 import com.example.calculater.adapters.MusicAdapter;
 import com.example.calculater.databinding.ActivityMusicBinding;
+import com.example.calculater.utils.FileHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,8 +49,11 @@ import java.util.List;
 import java.util.Set;
 
 public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
+
+    private static final String TAG = "ActivityMusicBinding";
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 41;
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
+    private final int FILE_REQUEST_CODE = 1;
     ImageView arow, addmusic;
     boolean add = false;
     private RecyclerView recyclerView;
@@ -57,7 +62,6 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     private MusicAdapter fileAdapter;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
-    private int FILE_REQUEST_CODE = 1;
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -106,8 +110,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     public void requestPermissionForReadExtertalStorage() {
         try {
             Log.e("permission ", "requested");
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_STORAGE_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -117,8 +120,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     public void requestPermissionForWriteExtertalStorage() {
         try {
             Log.e("permission ", "requested");
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    WRITE_STORAGE_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -138,12 +140,9 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         recyclerView = findViewById(R.id.recyclerMusic);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted, request it
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    FILE_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, FILE_REQUEST_CODE);
         } else {
             // Permission already granted
 
@@ -171,6 +170,11 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             fileAdapter = new MusicAdapter(selectedVideoUris, this, recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(fileAdapter);
+
+
+            if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+            else binding.tvNoFilesYet.setVisibility(View.GONE);
+
         }
         // menu button
         selectedPositions = new HashSet<>();
@@ -201,45 +205,37 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             //   Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
         }
         /// click button
-        arow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        arow.setOnClickListener(v -> onBackPressed());
 
-        addmusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        addmusic.setOnClickListener(v -> {
 
-                if (checkPermissionForReadExtertalStorage()) {
-                    if (checkPermissionForWriteExternalStorage()) {
-                        add = true;
-                        Log.e("permission ", "given");
-                    } else {
-                        add = false;
-                        Log.e("permission ", " write not given");
-                        try {
-                            requestPermissionForWriteExtertalStorage();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+            if (checkPermissionForReadExtertalStorage()) {
+                if (checkPermissionForWriteExternalStorage()) {
+                    add = true;
+                    Log.e("permission ", "given");
                 } else {
                     add = false;
-                    Log.e("permission ", "not given");
+                    Log.e("permission ", " write not given");
                     try {
-                        requestPermissionForReadExtertalStorage();
+                        requestPermissionForWriteExtertalStorage();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
-                if (add) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("audio/*");
-                    // intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    startActivityForResult(Intent.createChooser(intent, "Select Audio"), FILE_REQUEST_CODE);
+            } else {
+                add = false;
+                Log.e("permission ", "not given");
+                try {
+                    requestPermissionForReadExtertalStorage();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (add) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("audio/*");
+                // intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(Intent.createChooser(intent, "Select Audio"), FILE_REQUEST_CODE);
             }
         });
     }
@@ -294,6 +290,10 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         fileAdapter.setSelectedPositions(selectedPositions);
         fileAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
+
     }
 
     private void deleteSelectedVideos() {
@@ -310,6 +310,11 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         fileAdapter.setSelectedPositions(selectedPositions);
         fileAdapter.notifyDataSetChanged();
         updateActionModeTitle();
+
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
+
+
     }
 
     private void updateActionModeTitle() {
@@ -323,19 +328,19 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
                 Uri selectedFileUri = data.getData();
-                String filePath = getDataColumn(selectedFileUri);
-                if (filePath != null) {
-                    saveDataToFile(selectedFileUri);
-                    //selectedFileUri = newImageUri;
-                    selectedVideoUris.add(selectedFileUri); // Add the file URI to your list
-                    fileAdapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
-                } else {
-                    Log.e("Unable", selectedFileUri.toString());
-                    Toast.makeText(this, "Unable to get file path", Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) {
+                Log.d(TAG, "onActivityResult: selectedFileUri " + selectedFileUri);
+                saveDataToFile(selectedFileUri);
+                Log.d(TAG, "onActivityResult: newImageUri " + newImageUri);
+                int position = selectedVideoUris.size();
+                selectedVideoUris.add(newImageUri);
+                Log.d(TAG, "onActivityResult: newImageUri position " + position);
+                fileAdapter.notifyItemInserted(position);
+                if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+                else binding.tvNoFilesYet.setVisibility(View.GONE);
 
+            } catch (Exception e) {
             }
+
         }
     }
 
@@ -350,6 +355,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         } else if (getFileExtension(selectedVideoUri.getPath()).equals("AUDIO") || getFileExtension(selectedVideoUri.getPath()).equals("mp4")) {
             folderName = folderName + File.separator + "document";
         }
+
         // Create the folder in the Downloads directory if it doesn't exist
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), folderName);
         if (!folder.exists()) {
@@ -360,6 +366,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 return;
             }
         }
+
         String fileName = getFileName(selectedVideoUri);
         if (fileName == null) {
             Toast.makeText(this, "Invalid file name", Toast.LENGTH_SHORT).show();
@@ -370,9 +377,12 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "application/*");
         contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + File.separator + folderName);
 
+        Log.d(TAG, "saveDataToFile: inside... ");
+
 
         // Get the actual file path from the URI
-        String sourceFilePath = getDataColumn(selectedVideoUri);
+        String sourceFilePath = FileHelper.getRealPathFromURI(this, selectedVideoUri);
+        Log.d(TAG, "saveDataToFile: source file path ... " + sourceFilePath);
         if (sourceFilePath == null) {
             Toast.makeText(this, "Source file path is null", Toast.LENGTH_SHORT).show();
             return;
@@ -397,8 +407,12 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
 
             // Delete the source file
             if (sourceFile.exists()) {
-                newImageUri = getFileUri(tempFile);
-                deleteFiles(getFileUri(sourceFile));
+                try {
+                    newImageUri = getFileUri(tempFile);
+                    deleteFiles(getFileUri(sourceFile));
+                } catch (Exception e) {
+                    Log.d(TAG, "saveDataToFile: exception while deleting files");
+                }
             } else {
                 Toast.makeText(this, "Source file doesn't exist", Toast.LENGTH_SHORT).show();
             }
@@ -406,6 +420,8 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             e.printStackTrace();
             Toast.makeText(this, "Failed to move the file", Toast.LENGTH_SHORT).show();
         }
+
+        Log.d(TAG, "saveDataToFile: Done complete .. ");
     }
 
     private void restoreVideo(Uri videoUri) {
@@ -523,6 +539,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         }
     }
 
+    @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String fileName = null;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
@@ -546,30 +563,38 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
 
     private Uri getFileUri(File file) {
         Context context = getApplicationContext();
-        String authority = context.getPackageName() + ".TrashActivity";
+        String authority = context.getPackageName() + ".activities.TrashActivity";
         // Get the Uri for the file using FileProvider
         return FileProvider.getUriForFile(context, authority, file);
     }
 
     private void deleteFiles(Uri fileUri) {
+        Log.d(TAG, "deleteFiles: " + fileUri);
         // Check if the app has permission to delete files
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             // Request the MANAGE_EXTERNAL_STORAGE permission
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    .setData(Uri.parse("package:" + getPackageName()));
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
             return;
         }
+
+        Log.d(TAG, "deleteFiles: version check ");
+
         // Delete the file from media store
         ContentResolver contentResolver = getContentResolver();
+        Log.d(TAG, "deleteFiles: content resolver");
         int rowsDeleted = contentResolver.delete(fileUri, null, null);
+        Log.d(TAG, "deleteFiles: deletion performed");
         if (rowsDeleted > 0) {
             // File deleted successfully
-            //Toast.makeText(this, "Music save successfully", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "deleteFiles: deleted ");
+            Toast.makeText(this, "Music deleted successfully", Toast.LENGTH_SHORT).show();
         } else {
+            Log.d(TAG, "deleteFiles: deletion failed");
             // Failed to delete the file
             Toast.makeText(this, "Failed to save the music", Toast.LENGTH_SHORT).show();
         }
+        Log.d(TAG, "deleteFiles: done");
     }
 
     private String getDataColumn(Uri uri) {
@@ -579,13 +604,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             String[] selectionArgs = new String[]{DocumentsContract.getDocumentId(uri).split(":")[1]};
             Cursor cursor = null;
             try {
-                cursor = getContentResolver().query(
-                        MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null
-                );
+                cursor = getContentResolver().query(MediaStore.Downloads.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
                     return cursor.getString(columnIndex);
@@ -601,13 +620,5 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
 
         return null;
     }
-
-   /* @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent i = new Intent(this, FileManager.class);
-        startActivity(i);
-        finish();
-    }*/
 
 }
