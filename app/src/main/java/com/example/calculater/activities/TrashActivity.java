@@ -21,11 +21,11 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.calculater.R;
 import com.example.calculater.adapters.TrashAdapter;
 import com.example.calculater.databinding.ActivityTrashBinding;
+import com.example.calculater.utils.CommonFunctions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,9 +42,7 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
     List<Uri> selectedTrash;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
-    private int DELETE_REQUEST_CODE = 100;
-    private Uri newImageUri = null;
-    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
@@ -88,47 +86,28 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // id define
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        binding.arrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-//                Intent intent = new Intent(TrashActivity.this, HomeActivity.class);
-//                startActivity(intent);
-//                finish();
-            }
-        });
-        // check permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        } else {
+        binding.arrow.setOnClickListener(v -> onBackPressed());
 
-            /// getExternalStorageDirectory path
+        selectedTrash = new ArrayList<>();
+        trashAdapter = new TrashAdapter(selectedTrash);
+        binding.trashRecyclerView.setAdapter(trashAdapter);
+
+        // check permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             try {
-                selectedTrash = new ArrayList<>();
-                // Add files to the selectedTrash list
-                String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + ".Calculator" + File.separator + "Trash";
-                Log.d("Files", "Path: " + path);
-                File directory = new File(path);
-                File[] files = directory.listFiles();
-                Log.d("Files", "Size: " + files.length);
-                for (File file : files) {
-                    Log.d("Files", "FileName: " + file.getName());
-                    selectedTrash.add(Uri.fromFile(file));
-                }
+                List<Uri> files = CommonFunctions.getFiles(null);
+                selectedTrash.addAll(files);
+                trashAdapter.notifyItemRangeInserted(0, files.size());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            binding.trashRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-            trashAdapter = new TrashAdapter(selectedTrash);
-            binding.trashRecyclerView.setAdapter(trashAdapter);
-
             if (selectedTrash.isEmpty())
                 binding.tvNoFilesYet.setVisibility(View.VISIBLE);
             else binding.tvNoFilesYet.setVisibility(View.GONE);
-
         }
+
         selectedPositions = new HashSet<>();
+
         try {
             trashAdapter.setOnItemClickListener(new TrashAdapter.OnItemClickListener() {
                 @Override

@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.example.calculater.databinding.ActivityHomeBinding;
 
-public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
+public class HomeActivity extends BasePermissionActivity<ActivityHomeBinding> {
 
     @Override
     ActivityHomeBinding getLayout() {

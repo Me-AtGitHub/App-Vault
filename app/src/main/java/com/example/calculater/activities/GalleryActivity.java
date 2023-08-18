@@ -118,7 +118,6 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         selectedVideoUris.addAll(CommonFunctions.getFiles(FileType.IMAGE));
         imageAdapter = new ImageAdapter(this, selectedVideoUris);

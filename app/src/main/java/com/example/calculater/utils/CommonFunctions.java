@@ -13,6 +13,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -25,31 +26,33 @@ import java.util.List;
 
 public class CommonFunctions {
 
-    public static List<Uri> getFiles(FileType fileType) {
+    public static List<Uri> getFiles(@Nullable FileType fileType) {
 
-        Log.d("CommonFunctions", "getFiles: " + fileType.name());
         List<Uri> list = new ArrayList<Uri>();
         try {
 
-            // get path based on filetype
             String badePath = Environment.getExternalStorageDirectory().toString() + "/Download/";
             String additionalPath = "";
-            switch (fileType) {
-                case IMAGE:
-                    additionalPath = Constants.IMAGE_PATH;
-                    break;
-                case AUDIO:
-                    additionalPath = Constants.AUDIO_PATH;
-                    break;
-                case VIDEO:
-                    additionalPath = Constants.VIDEO_PATH;
-                    break;
-                case DOCUMENT:
-                    additionalPath = Constants.DOCUMENT_PATH;
-                    break;
-                default:
-                    additionalPath = "";
-                    break;
+            if (fileType == null) {
+                additionalPath = Constants.TRASH_PATH;
+            } else {
+                switch (fileType) {
+                    case IMAGE:
+                        additionalPath = Constants.IMAGE_PATH;
+                        break;
+                    case AUDIO:
+                        additionalPath = Constants.AUDIO_PATH;
+                        break;
+                    case VIDEO:
+                        additionalPath = Constants.VIDEO_PATH;
+                        break;
+                    case DOCUMENT:
+                        additionalPath = Constants.DOCUMENT_PATH;
+                        break;
+                    default:
+                        additionalPath = Constants.TRASH_PATH;
+                        break;
+                }
             }
 
             String path = badePath + additionalPath;
@@ -190,7 +193,6 @@ public class CommonFunctions {
         }
     }
 
-
     public static FileType getFileType(Context context, Uri uri) {
         FileType fileType = null;
         String mimeType = context.getContentResolver().getType(uri);
@@ -276,6 +278,5 @@ public class CommonFunctions {
         String authority = context.getPackageName() + Constants.PROVIDER_PATH;
         return FileProvider.getUriForFile(context, authority, file);
     }
-
 
 }

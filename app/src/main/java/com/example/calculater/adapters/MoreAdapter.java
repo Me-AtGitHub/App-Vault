@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.calculater.R;
-import com.example.calculater.utils.CommonFunctions;
-import com.example.calculater.utils.FileType;
+import com.example.calculater.utils.SavedData;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.ViewHolder> {
-    private List<Uri> trashList;
+    private List<SavedData> trashList;
     private OnItemClickListener listener;
     private Set<Integer> selectedPositions;
 
-    public MoreAdapter(List<Uri> trashList) {
+    public MoreAdapter(List<SavedData> trashList) {
         this.trashList = trashList;
     }
 
@@ -50,36 +48,30 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Uri fileUri = trashList.get(position);
-        FileType fileType = CommonFunctions.getFileType(holder.itemView.getContext(), fileUri);
-        Log.d("onBindViewHolder", "onBindViewHolder: " + fileUri);
-        if (fileType != null) {
-            switch (fileType) {
+        SavedData savedData = trashList.get(position);
+        if (savedData.fileType != null) {
+            switch (savedData.fileType) {
 
                 case IMAGE:
                 case VIDEO:
-                    Bitmap thumbnail = getVideoThumbnail(fileUri, holder.itemView.getContext());
+                    holder.audioNameTextView.setText(savedData.fileUri.getLastPathSegment());
+                    Bitmap thumbnail = getVideoThumbnail(savedData.fileUri, holder.itemView.getContext());
                     holder.thumbnailImageView.setImageBitmap(thumbnail);
                     Glide.with(holder.thumbnailImageView.getContext())
-                            .load(fileUri)
+                            .load(savedData.fileUri)
+                            .centerCrop()
                             .into(holder.thumbnailImageView);
                     break;
 
                 case DOCUMENT:
-                    String fileName = fileUri.getLastPathSegment();
+                    String fileName = savedData.fileUri.getLastPathSegment();
                     holder.audioNameTextView.setText(fileName);
-                    Glide.with(holder.audioNameTextView.getContext())
-                            .load(fileUri)
-                            .placeholder(R.drawable.folder)
-                            .into(holder.thumbnailImageView);
+                    holder.thumbnailImageView.setImageResource(R.drawable.folder);
                     break;
                 case AUDIO:
-                    String audioTitle = fileUri.getLastPathSegment();
+                    String audioTitle = savedData.fileUri.getLastPathSegment();
                     holder.audioNameTextView.setText(audioTitle);
-                    Glide.with(holder.audioNameTextView.getContext())
-                            .load(fileUri)
-                            .placeholder(R.drawable.music)
-                            .into(holder.thumbnailImageView);
+                    holder.thumbnailImageView.setImageResource(R.drawable.music);
                     break;
 
             }
