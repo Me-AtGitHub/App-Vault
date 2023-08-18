@@ -5,6 +5,7 @@ import static com.example.calculater.utils.FileHelper.getFileName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -133,6 +134,9 @@ public class CommonFunctions {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        notifyResolver(context, selectedVideoUri);
+        notifyResolver(context, newFileUri);
         return newFileUri;
     }
 
@@ -145,6 +149,7 @@ public class CommonFunctions {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        notifyResolver(context, fileUri);
     }
 
     public static void checkManagePermission(Context context) {
@@ -191,6 +196,8 @@ public class CommonFunctions {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        notifyResolver(context, fileUri);
     }
 
     public static FileType getFileType(Context context, Uri uri) {
@@ -222,6 +229,8 @@ public class CommonFunctions {
     }
 
     public static void recoverFile(Context context, Uri selectedFileUri, FileType fileType) {
+        Log.d("recoverFile", "recoverFile: URI => " + selectedFileUri);
+        Log.d("recoverFile", "recoverFile: fileType => " + fileType.name());
         if (selectedFileUri == null) {
             return;
         }
@@ -248,6 +257,7 @@ public class CommonFunctions {
 
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), folderName);
 
+        Log.d("recoverFile", "recoverFile: folder where recovered " + folder);
         if (!folder.exists()) {
             if (!folder.mkdirs()) return;
         }
@@ -257,6 +267,9 @@ public class CommonFunctions {
 
         File sourceFile = new File(sourceFilePath);
         File destinationFile = new File(folder, sourceFile.getName());
+
+        Log.d("recoverFile", "recoverFile: sourceFile " + sourceFile);
+        Log.d("recoverFile", "recoverFile: destinationFile " + destinationFile);
 
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(selectedFileUri);
@@ -268,9 +281,13 @@ public class CommonFunctions {
             }
             inputStream.close();
             outputStream.close();
+            Log.d("recoverFile", "recoverFile: recover complete => ");
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("recoverFile", "recoverFile: exception => " + e.getMessage());
         }
+
+        notifyResolver(context, selectedFileUri);
 
     }
 
@@ -278,5 +295,19 @@ public class CommonFunctions {
         String authority = context.getPackageName() + Constants.PROVIDER_PATH;
         return FileProvider.getUriForFile(context, authority, file);
     }
+
+    private static void notifyResolver(Context context, @Nullable Uri fileUri) {
+        try {
+            if (fileUri != null) {
+                MediaScannerConnection.scanFile(context, new String[]{fileUri.toString()}, null, (path, uri) -> {
+                    Log.i("ExternalStorage", "Scanned " + path + ":");
+                    Log.i("ExternalStorage", "-> uri=" + uri);
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
