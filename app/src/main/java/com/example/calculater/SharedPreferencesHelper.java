@@ -3,6 +3,11 @@ package com.example.calculater;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.calculater.utils.CalculationHistory;
+import com.google.common.reflect.TypeToken;
+
+import java.util.List;
+
 public class SharedPreferencesHelper {
     private static final String PREF_NAME = "MyPreferences";
     private SharedPreferences sharedPreferences;
@@ -51,6 +56,15 @@ public class SharedPreferencesHelper {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
+    }
+
+
+    public void addCalculationHistory(CalculationHistory item) {
+        String savedString = getString("CalculationHistory", "");
+        if (savedString != null && !savedString.isEmpty()) {
+            TypeToken<List<CalculationHistory>> typeToken = new TypeToken<List<CalculationHistory>>() {
+            };
+        }
     }
 
 }

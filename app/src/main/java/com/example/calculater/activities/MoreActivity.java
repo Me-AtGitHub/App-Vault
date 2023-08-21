@@ -225,7 +225,6 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
             e.printStackTrace();
             Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     // menu function

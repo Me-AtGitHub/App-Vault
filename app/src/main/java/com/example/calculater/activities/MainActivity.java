@@ -11,21 +11,29 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.calculater.SharedPreferencesHelper;
+import com.example.calculater.adapters.CalculationHistoryAdapter;
 import com.example.calculater.databinding.ActivityMainBinding;
+import com.example.calculater.utils.CalculationHistory;
 
 import net.objecthunter.exp4j.ExpressionBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private static final char ADDITION = '+';
     private static final char SUBTRACTION = '-';
     private static final char MULTIPLICATION = '*';
     private static final char DIVISION = '/';
+    private final List<CalculationHistory> calculationHistory = new ArrayList<>();
     String password = "";
     SharedPreferencesHelper sharedPreferencesHelper;
     Vibrator vb;
     private float value1 = Float.NaN;
     private float value2;
     private char CURRENT_ACTION;
+
+    private CalculationHistoryAdapter historyAdapter;
 
     @Override
     ActivityMainBinding getLayout() {
@@ -35,6 +43,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        historyAdapter = new CalculationHistoryAdapter();
         sharedPreferencesHelper = new SharedPreferencesHelper(this);
 
         vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -47,6 +56,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             binding.solution.setText("");
             return true;
         });
+
+        binding.rvHistory.setAdapter(historyAdapter);
     }
 
 
@@ -104,9 +115,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         calculate();
     }
 
-    // Implement addition subtract and more buttons
-
     public void buttonImplement() {
+
         binding.btnAdd.setOnClickListener(v -> {
             binding.solution.append("+");
             vb.vibrate(90);
@@ -115,6 +125,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             binding.result.setText(null);
 
         });
+
         binding.btnSubtract.setOnClickListener(v -> {
             binding.solution.append("-");
             vb.vibrate(90);
@@ -122,6 +133,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             CURRENT_ACTION = SUBTRACTION;
             binding.result.setText(null);
         });
+
         binding.btnMultiply.setOnClickListener(v -> {
             binding.solution.append("*");
             vb.vibrate(90);
@@ -129,6 +141,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             CURRENT_ACTION = MULTIPLICATION;
             binding.result.setText(null);
         });
+
         binding.btnDivide.setOnClickListener(v -> {
             binding.solution.append("/");
             vb.vibrate(90);
@@ -147,7 +160,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             vb.vibrate(90);
             String expression = binding.solution.getText().toString();
             if (containsOperator(expression)) {
-                calculate();
+                equalPressed();
             } else {
                 if (sharedPreferencesHelper.getString("password", "").isEmpty()) {
 
@@ -259,9 +272,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     }
 
-    // Implement calculation code here
-    // Implement calculation code here
-    // Implement calculation code here ßðð¯ß¯
+
     private void computeCalculation() {
         try {
             if (!Float.isNaN(value1)) {
@@ -296,6 +307,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             double result = builder.build().evaluate();
             binding.result.setText(String.valueOf(result));
         } else binding.result.setText("");
+    }
+
+    private void equalPressed() {
+        String expression = binding.solution.getText().toString();
+        ExpressionBuilder builder = new ExpressionBuilder(expression);
+        double result = builder.build().evaluate();
+        binding.solution.setText(String.valueOf(result));
+        binding.result.setText("");
     }
 
     private boolean containsOperator(String expression) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,554 +8,574 @@
     android:gravity="bottom"
     tools:context=".activities.MainActivity">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:orientation="vertical">
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingHorizontal="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="6"
+        tools:listitem="@layout/item_calculation_history" />
 
-        <TextView
-            android:id="@+id/solution"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="130dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/poppins_bold"
-            android:gravity="end"
-            android:maxLength="25"
-            android:padding="0dp"
-            android:textColor="@color/blue"
-            android:textSize="20sp" />
+    <RelativeLayout
+        android:id="@+id/rlBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <TextView
-            android:id="@+id/result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="6dp"
-            android:fontFamily="@font/poppins_bold"
-            android:gravity="end"
-            android:padding="0dp"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:id="@+id/linear1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="2dp">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnE"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="e"
-                    android:textAllCaps="false"
-                    android:textColor="#29a8ff"
-                    android:textSize="18sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnCos"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="cos"
-                    android:textAllCaps="false"
-                    android:textColor="#29a8ff"
-                    android:textSize="18sp" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnSin"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="sin"
-                    android:textAllCaps="false"
-                    android:textColor="#29a8ff"
-                    android:textSize="18sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnTan"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="tan"
-                    android:textAllCaps="false"
-                    android:textColor="#29a8ff"
-                    android:textSize="18sp" />
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="1dp"
-            android:paddingHorizontal="5dp">
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnAc"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/ac_btn"
-                    android:drawableStart="@drawable/ac" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnClear"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/ac_btn"
-                    android:drawableStart="@drawable/back" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnDivide"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_multi"
-                    android:drawableStart="@drawable/divide" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnMultiply"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_multi"
-                    android:drawableStart="@drawable/multiply" />
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="1dp">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn7"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="7"
-                    android:textAllCaps="false"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn8"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="8"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn9"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="9"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnSubtract"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_multi"
-                    android:drawableStart="@drawable/min" />
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:gravity="center"
-            android:padding="1dp">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginEnd="16dp"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn4"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="4"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/card1"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn5"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:layout_toEndOf="@+id/Btn4"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="5"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp"
-
-                    />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/card2"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn6"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:layout_toEndOf="@+id/Btn5"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="6"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/card3"
-                android:background="@drawable/btn_ac_line"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnAdd"
-                    android:layout_width="80dp"
-                    android:layout_height="91dp"
-                    android:layout_toEndOf="@+id/Btn6"
-                    android:background="@drawable/btn_multi"
-                    android:drawableStart="@drawable/puls" />
-            </androidx.cardview.widget.CardView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-18dp"
-            android:gravity="center"
-            android:padding="1dp">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginEnd="16dp"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn1"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="1"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp"
-
-                    />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card02"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/card01"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn2"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:layout_toEndOf="@+id/Btn4"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="2"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp"
-
-                    />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card03"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/card02"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn3"
-                    android:layout_width="80dp"
-                    android:layout_height="61dp"
-                    android:layout_toEndOf="@+id/Btn5"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="3"
-                    android:textColor="#29a8ff"
-                    android:textSize="19sp" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card04"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/solution"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="37dp"
-                android:layout_toEndOf="@+id/card03"
-                android:padding="4dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="end"
+                android:maxLength="25"
+                android:padding="0dp"
+                android:textColor="@color/blue"
+                android:textSize="20sp" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnEqual"
-                    android:layout_width="80dp"
-                    android:layout_height="103dp"
-                    android:layout_toEndOf="@+id/Btn6"
-                    android:background="@drawable/equal_btn"
-                    android:drawableStart="@drawable/equal_button" />
-
-            </androidx.cardview.widget.CardView>
-
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card011"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/result"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/card01"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="end"
+                android:padding="0dp"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/zeroBtn"
-                    android:layout_width="162dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="0"
-                    android:textColor="#29a8ff"
-                    android:textSize="19dp"
-
-                    />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card022"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/linear1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/card03"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/card011"
-                android:background="@drawable/btn_ac_line"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="4dp"
-                app:cardMaxElevation="4dp">
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="2dp">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnDot"
-                    android:layout_width="80dp"
-                    android:layout_height="60dp"
-                    android:layout_toRightOf="@+id/card022"
-                    android:background="@drawable/btn_shape1"
-                    android:fontFamily="@font/poppins_bold"
-                    android:text="."
-                    android:textColor="#29a8ff"
-                    android:textSize="24dp" />
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
 
-        </RelativeLayout>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnE"
+                        android:layout_width="80dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="e"
+                        android:textAllCaps="false"
+                        android:textColor="#29a8ff"
+                        android:textSize="18sp" />
+                </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
 
-</RelativeLayout>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnCos"
+                        android:layout_width="80dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="cos"
+                        android:textAllCaps="false"
+                        android:textColor="#29a8ff"
+                        android:textSize="18sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSin"
+                        android:layout_width="80dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="sin"
+                        android:textAllCaps="false"
+                        android:textColor="#29a8ff"
+                        android:textSize="18sp" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnTan"
+                        android:layout_width="80dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="tan"
+                        android:textAllCaps="false"
+                        android:textColor="#29a8ff"
+                        android:textSize="18sp" />
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="1dp"
+                android:paddingHorizontal="5dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnAc"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/ac_btn"
+                        android:drawableStart="@drawable/ac" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnClear"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/ac_btn"
+                        android:drawableStart="@drawable/back" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnDivide"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_multi"
+                        android:drawableStart="@drawable/divide" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnMultiply"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_multi"
+                        android:drawableStart="@drawable/multiply" />
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="1dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn7"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="7"
+                        android:textAllCaps="false"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn8"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="8"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn9"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="9"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSubtract"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_multi"
+                        android:drawableStart="@drawable/min" />
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:padding="1dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="16dp"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn4"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="4"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@+id/card1"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn5"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:layout_toEndOf="@+id/Btn4"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="5"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp"
+
+                        />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@+id/card2"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn6"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:layout_toEndOf="@+id/Btn5"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="6"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/card3"
+                    android:background="@drawable/btn_ac_line"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnAdd"
+                        android:layout_width="80dp"
+                        android:layout_height="91dp"
+                        android:layout_toEndOf="@+id/Btn6"
+                        android:background="@drawable/btn_multi"
+                        android:drawableStart="@drawable/puls" />
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-18dp"
+                android:gravity="center"
+                android:padding="1dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="16dp"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn1"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="1"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp"
+
+                        />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@+id/card01"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn2"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:layout_toEndOf="@+id/Btn4"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="2"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp"
+
+                        />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@+id/card02"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn3"
+                        android:layout_width="80dp"
+                        android:layout_height="61dp"
+                        android:layout_toEndOf="@+id/Btn5"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="3"
+                        android:textColor="#29a8ff"
+                        android:textSize="19sp" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="37dp"
+                    android:layout_toEndOf="@+id/card03"
+                    android:padding="4dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnEqual"
+                        android:layout_width="80dp"
+                        android:layout_height="103dp"
+                        android:layout_toEndOf="@+id/Btn6"
+                        android:background="@drawable/equal_btn"
+                        android:drawableStart="@drawable/equal_button" />
+
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card011"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/card01"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="16dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/zeroBtn"
+                        android:layout_width="162dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="0"
+                        android:textColor="#29a8ff"
+                        android:textSize="19dp"
+
+                        />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card022"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/card03"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@+id/card011"
+                    android:background="@drawable/btn_ac_line"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="4dp"
+                    app:cardMaxElevation="4dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnDot"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_toRightOf="@+id/card022"
+                        android:background="@drawable/btn_shape1"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="."
+                        android:textColor="#29a8ff"
+                        android:textSize="24dp" />
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
