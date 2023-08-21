@@ -21,16 +21,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.calculater.R;
 import com.example.calculater.adapters.VideoAdapter;
 import com.example.calculater.databinding.ActivityVideosBinding;
+import com.example.calculater.fragments.VideoFragment;
 import com.example.calculater.utils.CommonFunctions;
 import com.example.calculater.utils.FileType;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -146,16 +145,7 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
     }
 
     // open video player by intent
-    private void openVideoPlayer(Uri videoUri) {
-        PlayerView playerView = new PlayerView(this);
-        setContentView(playerView);
-        SimpleExoPlayer player = new SimpleExoPlayer.Builder(this).build();
-        playerView.setPlayer(player);
-        MediaItem mediaItem = MediaItem.fromUri(videoUri);
-        player.setMediaItem(mediaItem);
-        player.prepare();
-        player.play();
-    }
+
 
     @Override
     ActivityVideosBinding getLayout() {
@@ -175,10 +165,8 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
         binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recyclerView.setAdapter(videoAdapter);
 
-        if (selectedVideoUris.isEmpty())
-            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
-        else
-            binding.tvNoFilesYet.setVisibility(View.GONE);
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
 
         binding.arrow.setOnClickListener(v -> {
             onBackPressed();
@@ -221,9 +209,12 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
                         toggleSelection(position);
                     } else {
                         Uri videoUri = Uri.fromFile(selectedVideoUris.get(position));
-                        openVideoPlayer(videoUri);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("videoPath", videoUri.toString());
+                        DialogFragment fragment = new VideoFragment();
+                        fragment.setArguments(bundle);
+                        fragment.show(getSupportFragmentManager(), "");
                     }
-
                 }
 
                 @Override
@@ -275,10 +266,8 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
         videoAdapter.notifyDataSetChanged();
         updateActionModeTitle();
 
-        if (selectedVideoUris.isEmpty())
-            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
-        else
-            binding.tvNoFilesYet.setVisibility(View.GONE);
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
 
     }
 
@@ -297,10 +286,8 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
         videoAdapter.setSelectedPositions(selectedPositions);
         updateActionModeTitle();
 
-        if (selectedVideoUris.isEmpty())
-            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
-        else
-            binding.tvNoFilesYet.setVisibility(View.GONE);
+        if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        else binding.tvNoFilesYet.setVisibility(View.GONE);
     }
 
     private void updateActionModeTitle() {

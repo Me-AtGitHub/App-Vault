@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +16,7 @@ import android.widget.Toast;
 import com.example.calculater.R;
 import com.example.calculater.SharedPreferencesHelper;
 import com.example.calculater.databinding.ActivityRecoveryPasswordBinding;
+import com.example.calculater.utils.CommonFunctions;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +40,9 @@ public class RecoveryPasswordActivity extends BaseActivity<ActivityRecoveryPassw
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CommonFunctions.setLightStatusBar(this);
         arow = findViewById(R.id.arrow);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // id findView
         spinnerRecoveryQuestions = findViewById(R.id.spinner_recovery_questions);
         spinner2 = findViewById(R.id.spinner2);
@@ -52,13 +52,8 @@ public class RecoveryPasswordActivity extends BaseActivity<ActivityRecoveryPassw
         editText2 = findViewById(R.id.edit2);
         validateButton = findViewById(R.id.submit);
 
-        arow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(RecoveryPasswordActivity.this, SettingActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        arow.setOnClickListener(v -> {
+            onBackPressed();
         });
         // sharedPreferences
         sharedPreferences = new SharedPreferencesHelper(this);
@@ -128,31 +123,22 @@ public class RecoveryPasswordActivity extends BaseActivity<ActivityRecoveryPassw
             }
         });*/
 
-        validateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String inputText = recoveryPasswordEditText.getText().toString();
-                String inputText1 = editText2.getText().toString();
-                String inputText2 = editText1.getText().toString();
-                if (inputText.isEmpty()) {
-                    recoveryPasswordEditText.setError("Please enter text");
-                }
-                if (inputText1.isEmpty()) {
-                    editText1.setError("Please enter text");
-                }
-                if (inputText2.isEmpty()) {
-                    editText2.setError("Please enter text");
-                } else {
-                    setRecoveryPassword();
-                    Intent intent = new Intent(RecoveryPasswordActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                }
-              /*  if(validateSpinners()){
-                    setRecoveryPassword();
-                    Intent intent = new Intent(RecoveryPasswordActivity.this,HomeActivity.class);
-                    startActivity(intent);
-                }else {
-                }*/
+        validateButton.setOnClickListener(v -> {
+            String inputText = recoveryPasswordEditText.getText().toString();
+            String inputText1 = editText2.getText().toString();
+            String inputText2 = editText1.getText().toString();
+            if (inputText.isEmpty()) {
+                recoveryPasswordEditText.setError("Please enter text");
+            }
+            if (inputText1.isEmpty()) {
+                editText1.setError("Please enter text");
+            }
+            if (inputText2.isEmpty()) {
+                editText2.setError("Please enter text");
+            } else {
+                setRecoveryPassword();
+                Intent intent = new Intent(RecoveryPasswordActivity.this, HomeActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -176,7 +162,6 @@ public class RecoveryPasswordActivity extends BaseActivity<ActivityRecoveryPassw
                 "" + recoveryPassword + "" + recoveryPassword2 + "" + recoveryPassword3;
         Toast.makeText(this, "Recovery password set successfully", Toast.LENGTH_SHORT).show();
         saveDataToFile(dataToSave);
-        //createFolder();
     }
 
     private void createFolder() {
@@ -255,4 +240,9 @@ public class RecoveryPasswordActivity extends BaseActivity<ActivityRecoveryPassw
         }
     }*/
 
+    @Override
+    protected void onDestroy() {
+        CommonFunctions.clearLightStatusBar(this);
+        super.onDestroy();
+    }
 }

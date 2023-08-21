@@ -152,7 +152,6 @@ public class DownloadActivity extends BaseActivity<ActivityDownloadBinding> {
         arow = findViewById(R.id.arrow);
         addDownLoad = findViewById(R.id.downloadAdd);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         } else {

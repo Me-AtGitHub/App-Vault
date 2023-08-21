@@ -16,7 +16,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.calculater.R;
@@ -139,9 +139,9 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
                         if (selectedVideoUris.get(position) != null) {
                             bundle.putString("imagePath", String.valueOf(selectedVideoUris.get(position)));
                         }
-                        Fragment fragment = new ImageFragment();
+                        DialogFragment fragment = new ImageFragment();
                         fragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
+                        fragment.show(getSupportFragmentManager(), "");
                     }
                 }
 
@@ -196,6 +196,9 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         imageAdapter.notifyDataSetChanged();
         updateActionModeTitle();
 
+        if (selectedVideoUris.isEmpty()) {
+            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        } else binding.tvNoFilesYet.setVisibility(View.GONE);
 
     }
 

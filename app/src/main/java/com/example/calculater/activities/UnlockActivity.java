@@ -1,5 +1,8 @@
 package com.example.calculater.activities;
 
+import static com.example.calculater.utils.CommonFunctions.clearLightStatusBar;
+import static com.example.calculater.utils.CommonFunctions.setLightStatusBar;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +24,7 @@ public class UnlockActivity extends BaseActivity<ActivityunlockBinding> {
     TextView textView, titleText;
     String patternMatch;
 
+
     @Override
     ActivityunlockBinding getLayout() {
         return ActivityunlockBinding.inflate(getLayoutInflater());
@@ -29,7 +33,7 @@ public class UnlockActivity extends BaseActivity<ActivityunlockBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setLightStatusBar(this);
         titleText = findViewById(R.id.textView);
         textView = findViewById(R.id.forget);
         sharedPreferencesHelper = new SharedPreferencesHelper(this);
@@ -96,4 +100,9 @@ public class UnlockActivity extends BaseActivity<ActivityunlockBinding> {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        clearLightStatusBar(this);
+        super.onDestroy();
+    }
 }

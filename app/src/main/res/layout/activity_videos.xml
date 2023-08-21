@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="#14141c"
+    android:fitsSystemWindows="true"
     tools:context=".activities.VideosActivity">
 
 

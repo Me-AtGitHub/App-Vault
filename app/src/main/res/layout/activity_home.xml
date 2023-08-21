@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#14141c"
+    android:background="@drawable/wall_one"
     tools:context=".activities.HomeActivity">
 
     <LinearLayout
@@ -15,143 +15,191 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="93dp"
-            android:layout_marginBottom="2dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/fileManager"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+            <LinearLayout
+                android:id="@+id/llFileManager"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/file_icon" />
+                android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/setting"
-                android:layout_width="wrap_content"
-                android:layout_height="102dp"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/setting_icon_" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:src="@drawable/file_icon" />
 
-            <ImageView
-                android:id="@+id/trash"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="File Manager"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llSettings"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/trash_icon_" />
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:id="@+id/ivSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:src="@drawable/setting_icon_" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Setting"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llTrash"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivTrash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:src="@drawable/trash_icon_" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Trash"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="-8dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center_horizontal"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="File Manager"
-                android:textColor="@color/white"
-                android:textSize="14dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="18dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="Setting"
-                android:textColor="@color/white"
-                android:textSize="14dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/llPhotos"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="Trash"
-                android:textColor="@color/white"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="93dp"
-            android:layout_marginBottom="2dp"
-            android:orientation="horizontal">
-            <!--   <ImageView
-                   android:id="@+id/fileManager"
-                   android:layout_width="wrap_content"
-                   android:layout_height="100dp"
-                   android:layout_weight="1"
-                   android:visibility="gone"
-                   android:foreground="?android:attr/selectableItemBackground"
-                   android:src="@drawable/file_icon" />-->
-            <ImageView
-                android:id="@+id/photo"
-                android:layout_width="145dp"
-                android:layout_height="100dp"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/photo_icon" />
+                android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/video"
-                android:layout_width="147dp"
-                android:layout_height="100dp"
-                android:layout_marginLeft="8dp"
+
+                <ImageView
+                    android:id="@+id/ivPhotos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:src="@drawable/photo_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="Photos"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llVideos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/video_icon" />
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:id="@+id/ivVideos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:src="@drawable/video_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Videos"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llWallPaper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivWallPaper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:padding="12dp"
+                    android:src="@drawable/wallpaper" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Wallpaper"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-14dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:gravity="center"
-                android:padding="4dp"
-                android:text="Photos"
-                android:textColor="@color/white"
-                android:textSize="14dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/poppins_bold"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="Videos"
-                android:textColor="@color/white"
-                android:textSize="14dp" />
-        </LinearLayout>
     </LinearLayout>
+
 </RelativeLayout>

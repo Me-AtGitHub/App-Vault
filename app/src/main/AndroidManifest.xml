@@ -55,7 +55,8 @@
             android:exported="false" />
         <activity
             android:name=".activities.RecoveryPasswordActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.TrashActivity"
             android:exported="false" />
@@ -86,6 +87,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.CommonActivity"
+            android:exported="false">
+
+        </activity>
+
 
         <meta-data
             android:name="preloaded_fonts"

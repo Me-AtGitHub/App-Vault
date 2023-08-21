@@ -9,6 +9,7 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.example.calculater.SharedPreferencesHelper;
 import com.example.calculater.databinding.ActivityResetPasswordBinding;
+import com.example.calculater.utils.CommonFunctions;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBin
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        CommonFunctions.setLightStatusBar(this);
         sharedPreferencesHelper = new SharedPreferencesHelper(this);
 
         binding.forget.setOnClickListener(v -> {
@@ -84,5 +85,9 @@ public class ResetPasswordActivity extends BaseActivity<ActivityResetPasswordBin
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        CommonFunctions.clearLightStatusBar(this);
+        super.onDestroy();
+    }
 }

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle"
-    >
-    <solid
-        android:color="#1991ff"/>
-    <corners
-        android:radius="11dp"
-        />
-    <padding
-        android:bottom="8dp"
-        android:right="8dp"
-        android:left="8dp"
-        android:top="8dp"/>
-</shape>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/darker_gray">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1991ff" />
+            <corners android:radius="11dp" />
+            <padding
+                android:bottom="8dp"
+                android:left="8dp"
+                android:right="8dp"
+                android:top="8dp" />
+        </shape>
+
+    </item>
+</ripple>

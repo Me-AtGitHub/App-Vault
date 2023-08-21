@@ -18,14 +18,9 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         //// click button
         binding.arrow.setOnClickListener(v -> {
             onBackPressed();
-            /*Intent intent = new Intent(SettingActivity.this, HomeActivity.class);
-            startActivity(intent);
-            finish();*/
         });
         binding.help.setOnClickListener(v -> {
             Intent intent = new Intent(SettingActivity.this, HelpFeedbackActivity.class);

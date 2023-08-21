@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    android:fitsSystemWindows="true"
     android:background="#14141c"
     tools:context=".activities.GalleryActivity">
 
@@ -70,10 +71,5 @@
         android:textColor="#D6D5D5"
         android:textSize="18sp"
         android:visibility="gone" />
-
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </RelativeLayout>

@@ -116,7 +116,6 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         super.onCreate(savedInstanceState);
 
         selectedVideoUris = new ArrayList<>();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, FILE_REQUEST_CODE);
@@ -209,19 +208,6 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
 
     }
 
-    public void deleteItem(int position) {
-
-        Uri fileUri = Uri.fromFile(selectedVideoUris.get(position));
-
-        String filePath = fileUri.getPath();
-
-        File fileToDelete = new File(filePath);
-        if (fileToDelete.exists()) {
-            boolean isDeleted = fileToDelete.delete();
-        }
-
-    }
-
     private void restoreSelectedVideos() {
         List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
@@ -229,7 +215,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 selectedVideos.add(selectedVideoUris.get(position));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     CommonFunctions.recoverFile(this, Uri.fromFile(selectedVideoUris.get(position)), FileType.AUDIO);
-                    deleteItem(position);
+                    selectedVideoUris.get(position).delete();
                 }
             }
         }
@@ -250,7 +236,6 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             selectedVideos.add(selectedVideoUris.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 CommonFunctions.moveToTrash(this, Uri.fromFile(selectedVideoUris.get(position)));
-                deleteItem(position);
             }
         }
         selectedVideoUris.removeAll(selectedVideos);

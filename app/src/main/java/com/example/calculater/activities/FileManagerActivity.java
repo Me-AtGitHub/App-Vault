@@ -43,8 +43,6 @@ public class FileManagerActivity extends BaseActivity<ActivityFileManagerBinding
             startActivity(intent);
         });
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         // back to home button
         binding.arrow.setOnClickListener(v -> {
             onBackPressed();

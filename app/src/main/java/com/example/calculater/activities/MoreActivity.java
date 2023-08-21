@@ -17,14 +17,18 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.calculater.R;
 import com.example.calculater.adapters.MoreAdapter;
 import com.example.calculater.databinding.ActivityMoreBinding;
+import com.example.calculater.fragments.ImageFragment;
+import com.example.calculater.fragments.VideoFragment;
 import com.example.calculater.utils.CommonFunctions;
 import com.example.calculater.utils.FileType;
 import com.example.calculater.utils.SavedData;
+import com.rajat.pdfviewer.PdfViewerActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -168,8 +172,41 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
                 public void onItemClick(int position) {
                     if (actionMode != null) {
                         toggleSelection(position);
+                        new PdfViewerActivity();
                     } else {
-//                        Uri videoUri = selectedVideoUris.get(position).file;
+
+                        switch (selectedVideoUris.get(position).fileType) {
+                            case DOCUMENT:
+                                startActivity(PdfViewerActivity.Companion.launchPdfFromPath(
+                                        MoreActivity.this,
+                                        "pdf_url",
+                                        "Pdf title/name ",
+                                        "pdf directory to save",
+                                        false, false));
+                                break;
+                            case IMAGE:
+                                Bundle bundle = new Bundle();
+                                if (selectedVideoUris.get(position) != null) {
+                                    bundle.putString("imagePath", String.valueOf(Uri.fromFile(selectedVideoUris.get(position).file)));
+                                }
+                                DialogFragment fragment = new ImageFragment();
+                                fragment.setArguments(bundle);
+                                fragment.show(getSupportFragmentManager(), "");
+                                break;
+
+                            case VIDEO:
+                                Uri videoUri = Uri.fromFile(selectedVideoUris.get(position).file);
+                                Bundle b = new Bundle();
+                                b.putString("videoPath", videoUri.toString());
+                                DialogFragment frag = new VideoFragment();
+                                frag.setArguments(b);
+                                frag.show(getSupportFragmentManager(), "");
+                                break;
+
+                            case AUDIO:
+                                // Play audio
+                                break;
+                        }
                     }
 
                 }
@@ -182,6 +219,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
                     toggleSelection(position);
                     return true;
                 }
+
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -288,4 +326,5 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
             fileAdapter.notifyItemInserted(positionToAdd);
         }
     }
+
 }

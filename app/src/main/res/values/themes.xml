@@ -8,8 +8,6 @@
 
     <style name="Theme.Calculater" parent="Base.Theme.Calculater">
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
 
@@ -22,5 +20,16 @@
         <item name="android:windowMinWidthMajor">80pt</item>
         <item name="android:windowMinWidthMinor">80pt</item>
     </style>
+
+    <style name="DialogFragment" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:windowMinWidthMajor">100pt</item>
+        <item name="android:windowMinWidthMinor">100pt</item>
+    </style>
+
+    <style name="SelectableItemBackground">
+        <item name="android:colorControlHighlight">@android:color/white</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
 
 </resources>

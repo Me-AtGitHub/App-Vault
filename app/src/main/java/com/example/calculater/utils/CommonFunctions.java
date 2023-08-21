@@ -4,6 +4,7 @@ import static com.example.calculater.utils.FileHelper.copyFile;
 import static com.example.calculater.utils.FileHelper.processUri;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +17,13 @@ import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -414,5 +418,17 @@ public class CommonFunctions {
         }
     }
 
+
+    public static void setLightStatusBar(Activity activity) {
+        int flags = activity.getWindow().getDecorView().getSystemUiVisibility();
+        flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        activity.getWindow().getDecorView().setSystemUiVisibility(flags);
+    }
+
+    public static void clearLightStatusBar(Activity activity) {
+        Window window = activity.getWindow();
+        window.setStatusBarColor(ContextCompat
+                .getColor(activity, android.R.color.transparent));
+    }
 
 }
