@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -27,6 +26,7 @@ import com.example.calculater.fragments.ImageFragment;
 import com.example.calculater.utils.CommonFunctions;
 import com.example.calculater.utils.FileType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,8 +37,8 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
     private static final int GALLERY_REQUEST_CODE = 100;
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 41;
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
+    private final List<File> selectedVideoUris = new ArrayList<File>();
     boolean add = false;
-    private List<Uri> selectedVideoUris = new ArrayList<Uri>();
     private ImageAdapter imageAdapter;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
@@ -119,7 +119,7 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
         super.onCreate(savedInstanceState);
 
 
-        selectedVideoUris.addAll(CommonFunctions.getFiles(FileType.IMAGE));
+        selectedVideoUris.addAll(CommonFunctions.getFilesOne(FileType.IMAGE));
         imageAdapter = new ImageAdapter(this, selectedVideoUris);
         binding.recyclerViewGallery.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recyclerViewGallery.setAdapter(imageAdapter);
@@ -183,11 +183,11 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void deleteSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             if (((selectedVideoUris.size() - 1) >= position) && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
-                CommonFunctions.moveToTrash(this, selectedVideoUris.get(position));
+                CommonFunctions.moveToTrash(this, Uri.fromFile(selectedVideoUris.get(position)));
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -200,12 +200,13 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
     }
 
     private void restoreSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             if (selectedVideoUris.size() >= position && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
-                CommonFunctions.recoverFile(this, selectedVideoUris.get(position), FileType.IMAGE);
-                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
+                CommonFunctions.recoverFile(this, Uri.fromFile(selectedVideoUris.get(position)), FileType.IMAGE);
+                selectedVideoUris.get(position).delete();
+//                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -239,9 +240,9 @@ public class GalleryActivity extends BaseActivity<ActivityGalleryBinding> implem
                     int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     cursor.moveToFirst();
                     cursor.close();
-                    newImageUri = CommonFunctions.saveFile(this, selectedImageUri, FileType.IMAGE);
+                    File newFile = CommonFunctions.saveFile(this, selectedImageUri, FileType.IMAGE);
                     int position = selectedVideoUris.size();
-                    selectedVideoUris.add(newImageUri);
+                    selectedVideoUris.add(newFile);
                     imageAdapter.notifyItemInserted(position);
                     binding.tvNoFilesYet.setVisibility(View.GONE);
                 }

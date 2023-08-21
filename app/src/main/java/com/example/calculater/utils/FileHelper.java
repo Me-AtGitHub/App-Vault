@@ -1,16 +1,13 @@
 package com.example.calculater.utils;
 
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
@@ -18,30 +15,14 @@ import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Objects;
 
 public class FileHelper {
 
 
-    @Nullable
-    public static String getRealPathFromURI(final Context context, final Uri uri) {
-        String path = null;
-        try {
-            path = processUri(context, uri);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        if (TextUtils.isEmpty(path)) {
-            path = copyFile(context, uri);
-        }
-        return path;
-    }
-
-    private static String processUri(Context context, Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    static String processUri(Context context, Uri uri) {
         String path = "";
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -59,13 +40,9 @@ public class FileHelper {
                     Uri rawuri = Uri.parse(id);
                     path = rawuri.getPath();
                 } else {
-                    String[] contentUriPrefixesToTry = new String[]{
-                            "content://downloads/public_downloads",
-                            "content://downloads/my_downloads"
-                    };
+                    String[] contentUriPrefixesToTry = new String[]{"content://downloads/public_downloads", "content://downloads/my_downloads"};
                     for (String contentUriPrefix : contentUriPrefixesToTry) {
-                        final Uri contentUri = ContentUris.withAppendedId(
-                                Uri.parse(contentUriPrefix), Long.valueOf(id));
+                        final Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
                         path = getDataColumn(context, contentUri, null, null);
                         if (!TextUtils.isEmpty(path)) {
                             break;
@@ -86,9 +63,7 @@ public class FileHelper {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{
-                        split[1]
-                };
+                final String[] selectionArgs = new String[]{split[1]};
 
                 path = getDataColumn(context, contentUri, selection, selectionArgs);
             } else if ("content".equalsIgnoreCase(uri.getScheme())) {
@@ -150,15 +125,13 @@ public class FileHelper {
      * @return The value of the _data column, which is typically a file path.
      */
 
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
+    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
         String result = null;
         final String column = "_data";
         final String[] projection = {column};
         try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
             if (cursor != null && cursor.moveToFirst()) {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 result = cursor.getString(index);
@@ -167,8 +140,7 @@ public class FileHelper {
             ex.printStackTrace();
             return null;
         } finally {
-            if (cursor != null)
-                cursor.close();
+            if (cursor != null) cursor.close();
         }
         return result;
     }
@@ -197,25 +169,4 @@ public class FileHelper {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    @SuppressLint("Range")
-    public static String getFileName(Uri uri, Context context) {
-        String fileName = null;
-        if (Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver contentResolver = context.getContentResolver();
-            Cursor cursor = contentResolver.query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
-            }
-        }
-        if (fileName == null) {
-            fileName = uri.getLastPathSegment();
-        }
-        return fileName;
-    }
 }

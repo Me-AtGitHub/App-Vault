@@ -49,27 +49,28 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SavedData savedData = trashList.get(position);
+        Uri fileUri = Uri.fromFile(savedData.file);
         if (savedData.fileType != null) {
             switch (savedData.fileType) {
 
                 case IMAGE:
                 case VIDEO:
-                    holder.audioNameTextView.setText(savedData.fileUri.getLastPathSegment());
-                    Bitmap thumbnail = getVideoThumbnail(savedData.fileUri, holder.itemView.getContext());
+                    holder.audioNameTextView.setText(fileUri.getLastPathSegment());
+                    Bitmap thumbnail = getVideoThumbnail(fileUri, holder.itemView.getContext());
                     holder.thumbnailImageView.setImageBitmap(thumbnail);
                     Glide.with(holder.thumbnailImageView.getContext())
-                            .load(savedData.fileUri)
+                            .load(fileUri)
                             .centerCrop()
                             .into(holder.thumbnailImageView);
                     break;
 
                 case DOCUMENT:
-                    String fileName = savedData.fileUri.getLastPathSegment();
+                    String fileName = fileUri.getLastPathSegment();
                     holder.audioNameTextView.setText(fileName);
                     holder.thumbnailImageView.setImageResource(R.drawable.folder);
                     break;
                 case AUDIO:
-                    String audioTitle = savedData.fileUri.getLastPathSegment();
+                    String audioTitle = fileUri.getLastPathSegment();
                     holder.audioNameTextView.setText(audioTitle);
                     holder.thumbnailImageView.setImageResource(R.drawable.music);
                     break;

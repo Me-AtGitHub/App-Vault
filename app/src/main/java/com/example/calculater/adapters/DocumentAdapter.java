@@ -16,26 +16,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.calculater.R;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHolder> {
-    private List<Uri> fileList;
+    private List<File> fileList;
     private Context context;
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-        boolean onItemLongClick(int position);
-    }
     private DocumentAdapter.OnItemClickListener listener;
     private Set<Integer> selectedPositions;
-    public DocumentAdapter(List<Uri> fileList, Context context) {
+    public DocumentAdapter(List<File> fileList, Context context) {
         this.fileList = fileList;
         this.context = context;
         this.selectedPositions = new HashSet<>();
 
     }
+
     public void setOnItemClickListener(DocumentAdapter.OnItemClickListener listener) {
         this.listener = listener;
     }
@@ -44,15 +42,17 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
         this.selectedPositions = selectedPositions;
         notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public DocumentAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_document, parent, false);
         return new ViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(@NonNull DocumentAdapter.ViewHolder holder, int position) {
-        Uri audioUri = fileList.get(position);
+        Uri audioUri = Uri.fromFile(fileList.get(position));
         String audioTitle = audioUri.getLastPathSegment();
         holder.audioNameTextView.setText(audioTitle);
 
@@ -70,6 +70,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
     private boolean isSelected(int position) {
         return selectedPositions.contains(position);
     }
+
     @Override
     public int getItemCount() {
         return fileList.size();
@@ -92,17 +93,25 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
         return null;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
-        ImageView thumbnailImageView,document;
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+
+        boolean onItemLongClick(int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        ImageView thumbnailImageView, document;
         private TextView audioNameTextView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             thumbnailImageView = itemView.findViewById(R.id.DocumentFile);
-            document=itemView.findViewById(R.id.DocumentImageView);
+            document = itemView.findViewById(R.id.DocumentImageView);
             audioNameTextView = itemView.findViewById(R.id.DocumentText);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
+
         @Override
         public void onClick(View v) {
             if (listener != null) {
@@ -110,14 +119,15 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
                 document.setVisibility(View.GONE);
             }
         }
+
         @Override
         public boolean onLongClick(View v) {
             if (listener != null) {
-                thumbnailImageView.setVisibility( View.VISIBLE);
+                thumbnailImageView.setVisibility(View.VISIBLE);
                 document.setVisibility(View.VISIBLE);
                 return listener.onItemLongClick(getAdapterPosition());
-            }else {
-                thumbnailImageView.setVisibility( View.VISIBLE);
+            } else {
+                thumbnailImageView.setVisibility(View.VISIBLE);
                 document.setVisibility(View.GONE);
             }
             return false;

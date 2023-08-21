@@ -26,6 +26,7 @@ import com.example.calculater.utils.CommonFunctions;
 import com.example.calculater.utils.FileType;
 import com.example.calculater.utils.SavedData;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,10 +36,10 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
 
 
     private final List<SavedData> selectedVideoUris = new ArrayList<>();
-    private final List<Uri> imageUris = new ArrayList<>();
-    private final List<Uri> videoUris = new ArrayList<>();
-    private final List<Uri> audioUris = new ArrayList<>();
-    private final List<Uri> documentUris = new ArrayList<>();
+    private final List<File> imageUris = new ArrayList<>();
+    private final List<File> videoUris = new ArrayList<>();
+    private final List<File> audioUris = new ArrayList<>();
+    private final List<File> documentUris = new ArrayList<>();
     private MoreAdapter fileAdapter;
     private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (result) -> {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -46,7 +47,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
             if (selectedFileUri != null) {
                 FileType fileType = CommonFunctions.getFileType(this, selectedFileUri);
                 if (fileType != null) {
-                    Uri uriToAdd = CommonFunctions.saveFile(this, selectedFileUri, fileType);
+                    File uriToAdd = CommonFunctions.saveFile(this, selectedFileUri, fileType);
                     if (uriToAdd != null) {
                         addToList(uriToAdd, fileType);
                     }
@@ -128,22 +129,22 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             try {
 
-                imageUris.addAll(CommonFunctions.getFiles(FileType.IMAGE));
-                videoUris.addAll(CommonFunctions.getFiles(FileType.VIDEO));
-                audioUris.addAll(CommonFunctions.getFiles(FileType.AUDIO));
-                documentUris.addAll(CommonFunctions.getFiles(FileType.DOCUMENT));
+                imageUris.addAll(CommonFunctions.getFilesOne(FileType.IMAGE));
+                videoUris.addAll(CommonFunctions.getFilesOne(FileType.VIDEO));
+                audioUris.addAll(CommonFunctions.getFilesOne(FileType.AUDIO));
+                documentUris.addAll(CommonFunctions.getFilesOne(FileType.DOCUMENT));
 
-                for (Uri uri : imageUris) {
-                    selectedVideoUris.add(new SavedData(uri, FileType.IMAGE));
+                for (File file : imageUris) {
+                    selectedVideoUris.add(new SavedData(file, FileType.IMAGE));
                 }
-                for (Uri uri : videoUris) {
-                    selectedVideoUris.add(new SavedData(uri, FileType.VIDEO));
+                for (File file : videoUris) {
+                    selectedVideoUris.add(new SavedData(file, FileType.VIDEO));
                 }
-                for (Uri uri : audioUris) {
-                    selectedVideoUris.add(new SavedData(uri, FileType.AUDIO));
+                for (File file : audioUris) {
+                    selectedVideoUris.add(new SavedData(file, FileType.AUDIO));
                 }
-                for (Uri uri : documentUris) {
-                    selectedVideoUris.add(new SavedData(uri, FileType.DOCUMENT));
+                for (File file : documentUris) {
+                    selectedVideoUris.add(new SavedData(file, FileType.DOCUMENT));
                 }
 
                 int count = selectedVideoUris.size();
@@ -168,7 +169,7 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
                     if (actionMode != null) {
                         toggleSelection(position);
                     } else {
-                        Uri videoUri = selectedVideoUris.get(position).fileUri;
+//                        Uri videoUri = selectedVideoUris.get(position).file;
                     }
 
                 }
@@ -208,11 +209,11 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
     }
 
     private void deleteSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
-            selectedVideos.add(selectedVideoUris.get(position).fileUri);
+            selectedVideos.add(selectedVideoUris.get(position).file);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                CommonFunctions.moveToTrash(this, selectedVideoUris.get(position).fileUri);
+                CommonFunctions.moveToTrash(this, Uri.fromFile(selectedVideoUris.get(position).file));
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -228,14 +229,15 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
     }
 
     private void restoreSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
-            selectedVideos.add(selectedVideoUris.get(position).fileUri);
+            selectedVideos.add(selectedVideoUris.get(position).file);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                FileType fileType = CommonFunctions.getFileType(this, selectedVideoUris.get(position).fileUri);
+                FileType fileType = CommonFunctions.getFileType(this, Uri.fromFile(selectedVideoUris.get(position).file));
                 if (fileType != null) {
-                    CommonFunctions.recoverFile(this, selectedVideoUris.get(position).fileUri, fileType);
-                    CommonFunctions.deleteFile(this, selectedVideoUris.get(position).fileUri);
+                    CommonFunctions.recoverFile(this, Uri.fromFile(selectedVideoUris.get(position).file), fileType);
+//                    CommonFunctions.deleteFile(this, selectedVideoUris.get(position).fileUri);
+                    selectedVideoUris.get(position).file.delete();
                 }
             }
         }
@@ -256,33 +258,33 @@ public class MoreActivity extends BaseActivity<ActivityMoreBinding> {
         actionMode.setTitle(String.valueOf(selectedCount));
     }
 
-    private void addToList(Uri uri, FileType fileType) {
+    private void addToList(File file, FileType fileType) {
         int positionToAdd = -1;
         switch (fileType) {
             case AUDIO:
                 positionToAdd = (imageUris.size() + videoUris.size() + audioUris.size());
-                audioUris.add(uri);
+                audioUris.add(file);
                 break;
             case VIDEO:
                 positionToAdd = (imageUris.size() + videoUris.size());
-                videoUris.add(uri);
+                videoUris.add(file);
                 break;
             case IMAGE:
                 positionToAdd = (imageUris.size());
-                imageUris.add(uri);
+                imageUris.add(file);
                 break;
             case DOCUMENT:
                 positionToAdd = (imageUris.size() + videoUris.size() + audioUris.size() + documentUris.size());
-                documentUris.add(uri);
+                documentUris.add(file);
                 break;
             default:
                 break;
         }
         if (positionToAdd == -1) {
-            selectedVideoUris.add(0, new SavedData(uri, fileType));
+            selectedVideoUris.add(0, new SavedData(file, fileType));
             fileAdapter.notifyItemInserted(0);
         } else if (positionToAdd >= 0) {
-            selectedVideoUris.add(positionToAdd, new SavedData(uri, fileType));
+            selectedVideoUris.add(positionToAdd, new SavedData(file, fileType));
             fileAdapter.notifyItemInserted(positionToAdd);
         }
     }

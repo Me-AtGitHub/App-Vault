@@ -1,14 +1,14 @@
 package com.example.calculater.utils;
 
-import android.net.Uri;
+import java.io.File;
 
 public class SavedData {
 
-    public Uri fileUri;
+    public File file;
     public FileType fileType;
 
-    public SavedData(Uri fileUri, FileType fileType) {
-        this.fileUri = fileUri;
+    public SavedData(File file, FileType fileType) {
+        this.file = file;
         this.fileType = fileType;
     }
 

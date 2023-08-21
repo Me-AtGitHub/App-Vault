@@ -18,6 +18,7 @@ import com.example.calculater.adapters.TrashAdapter;
 import com.example.calculater.databinding.ActivityTrashBinding;
 import com.example.calculater.utils.CommonFunctions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Set;
 
 public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
     TrashAdapter trashAdapter;
-    List<Uri> selectedTrash;
+    List<File> selectedTrash;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
     private final ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -81,14 +82,13 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
         // check permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             try {
-                List<Uri> files = CommonFunctions.getFiles(null);
+                List<File> files = CommonFunctions.getFilesOne(null);
                 selectedTrash.addAll(files);
                 trashAdapter.notifyItemRangeInserted(0, files.size());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (selectedTrash.isEmpty())
-                binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+            if (selectedTrash.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
             else binding.tvNoFilesYet.setVisibility(View.GONE);
         }
 
@@ -100,7 +100,6 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
                 public void onItemClick(int position) {
                     if (actionMode != null) {
                         toggleSelection(position);
-                    } else {
                     }
                 }
 
@@ -136,11 +135,12 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
     }
 
     private void deleteSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             selectedVideos.add(selectedTrash.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                CommonFunctions.deleteFile(this, selectedTrash.get(position));
+//                CommonFunctions.deleteFile(this, selectedTrash.get(position));
+                selectedTrash.get(position).delete();
             }
         }
         selectedTrash.removeAll(selectedVideos);
@@ -149,19 +149,19 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
         trashAdapter.notifyDataSetChanged();
         updateActionModeTitle();
 
-        if (selectedTrash.isEmpty())
-            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        if (selectedTrash.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
         else binding.tvNoFilesYet.setVisibility(View.GONE);
 
     }
 
     private void restoreSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             selectedVideos.add(selectedTrash.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                CommonFunctions.recoverFile(this, selectedTrash.get(position), CommonFunctions.getFileType(this, selectedTrash.get(position)));
-                CommonFunctions.deleteFile(this, selectedTrash.get(position));
+                Uri fileUri = Uri.parse(selectedTrash.get(position).getAbsolutePath());
+                CommonFunctions.recoverFile(this, fileUri, CommonFunctions.getFileType(this, fileUri));
+                selectedTrash.get(position).delete();
             }
         }
         selectedTrash.removeAll(selectedVideos);
@@ -170,8 +170,7 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
         trashAdapter.notifyDataSetChanged();
         updateActionModeTitle();
 
-        if (selectedTrash.isEmpty())
-            binding.tvNoFilesYet.setVisibility(View.VISIBLE);
+        if (selectedTrash.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
         else binding.tvNoFilesYet.setVisibility(View.GONE);
 
     }
@@ -180,6 +179,5 @@ public class TrashActivity extends BaseActivity<ActivityTrashBinding> {
         int selectedCount = selectedPositions.size();
         actionMode.setTitle(String.valueOf(selectedCount));
     }
-
 
 }

@@ -16,21 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.calculater.R;
-import com.example.calculater.utils.FileHelper;
+import com.example.calculater.utils.CommonFunctions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHolder> {
-    private List<Uri> fileList;
-    private Context context;
-    private RecyclerView recyclerView;
+    private final List<File> fileList;
+    private final Context context;
+    private final RecyclerView recyclerView;
     private FileAdapter.OnItemClickListener listener;
     private Set<Integer> selectedPositions;
 
-    public MusicAdapter(List<Uri> fileList, Context context, RecyclerView recyclerView) {
+    public MusicAdapter(List<File> fileList, Context context, RecyclerView recyclerView) {
         this.fileList = fileList;
         this.context = context;
         this.selectedPositions = new HashSet<>();
@@ -55,14 +56,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHold
     }
 
     public void onBindViewHolder(@NonNull MusicAdapter.FileViewHolder holder, int position) {
-        Uri audioUri = fileList.get(position);
-        Log.d("onBindViewHolder", "onBindViewHolder: "+audioUri);
-        String audioTitle = FileHelper.getFileName(audioUri, holder.audioNameTextView.getContext());
+        Uri audioUri = Uri.fromFile(fileList.get(position));
+        Log.d("onBindViewHolder", "onBindViewHolder: " + audioUri);
+        String audioTitle = CommonFunctions.getFileName(audioUri, holder.audioNameTextView.getContext());
         holder.audioNameTextView.setText(audioTitle);
-        Glide.with(context)
-                .load(audioUri)
-                .placeholder(R.drawable.music)
-                .into(holder.thumbnailImageView);
+        Glide.with(context).load(audioUri).placeholder(R.drawable.music).into(holder.thumbnailImageView);
     }
 
     @Override
@@ -95,7 +93,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.FileViewHold
 
     public class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         ImageView thumbnailImageView, trick;
-        private TextView audioNameTextView;
+        private final TextView audioNameTextView;
 
         public FileViewHolder(View itemView) {
             super(itemView);

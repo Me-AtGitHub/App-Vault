@@ -37,7 +37,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
     private final int FILE_REQUEST_CODE = 1;
     boolean add = false;
-    private List<Uri> selectedVideoUris;
+    private List<File> selectedVideoUris;
     private MusicAdapter fileAdapter;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
@@ -124,7 +124,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
 
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            selectedVideoUris.addAll(CommonFunctions.getFiles(FileType.AUDIO));
+            selectedVideoUris.addAll(CommonFunctions.getFilesOne(FileType.AUDIO));
             fileAdapter = new MusicAdapter(selectedVideoUris, this, binding.recyclerMusic);
             binding.recyclerMusic.setLayoutManager(new LinearLayoutManager(this));
             binding.recyclerMusic.setAdapter(fileAdapter);
@@ -211,7 +211,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
 
     public void deleteItem(int position) {
 
-        Uri fileUri = selectedVideoUris.get(position);
+        Uri fileUri = Uri.fromFile(selectedVideoUris.get(position));
 
         String filePath = fileUri.getPath();
 
@@ -223,12 +223,12 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     }
 
     private void restoreSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             if (selectedVideoUris.size() >= position && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    CommonFunctions.recoverFile(this, selectedVideoUris.get(position), FileType.AUDIO);
+                    CommonFunctions.recoverFile(this, Uri.fromFile(selectedVideoUris.get(position)), FileType.AUDIO);
                     deleteItem(position);
                 }
             }
@@ -245,11 +245,11 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     }
 
     private void deleteSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             selectedVideos.add(selectedVideoUris.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                CommonFunctions.moveToTrash(this, selectedVideoUris.get(position));
+                CommonFunctions.moveToTrash(this, Uri.fromFile(selectedVideoUris.get(position)));
                 deleteItem(position);
             }
         }
@@ -275,9 +275,9 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
                 Uri selectedFileUri = data.getData();
-                Uri newImageUri = CommonFunctions.saveFile(this, selectedFileUri, FileType.AUDIO);
+                File newFile = CommonFunctions.saveFile(this, selectedFileUri, FileType.AUDIO);
                 int position = selectedVideoUris.size();
-                selectedVideoUris.add(newImageUri);
+                selectedVideoUris.add(newFile);
                 fileAdapter.notifyItemInserted(position);
                 if (selectedVideoUris.isEmpty()) binding.tvNoFilesYet.setVisibility(View.VISIBLE);
                 else binding.tvNoFilesYet.setVisibility(View.GONE);

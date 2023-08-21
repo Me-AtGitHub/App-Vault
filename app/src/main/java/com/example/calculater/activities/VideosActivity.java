@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +46,7 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
 
     boolean add = false;
 
-    private List<Uri> selectedVideoUris = new ArrayList<>();
+    private List<File> selectedVideoUris = new ArrayList<>();
     private VideoAdapter videoAdapter;
     private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -57,14 +58,14 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
                             ClipData clipData = result.getData().getClipData();
                             for (int i = 0; i < clipData.getItemCount(); i++) {
                                 Uri selectedVideoUri = clipData.getItemAt(i).getUri();
-                                Uri fileUri = CommonFunctions.saveFile(getBaseContext(), selectedVideoUri, FileType.VIDEO);
+                                File fileUri = CommonFunctions.saveFile(getBaseContext(), selectedVideoUri, FileType.VIDEO);
                                 int position = selectedVideoUris.size();
                                 selectedVideoUris.add(fileUri);
                                 videoAdapter.notifyItemInserted(position);
                             }
                         } else if (result.getData().getData() != null) {
                             Uri selectedVideoUri = result.getData().getData();
-                            Uri fileUri = CommonFunctions.saveFile(getBaseContext(), selectedVideoUri, FileType.VIDEO);
+                            File fileUri = CommonFunctions.saveFile(getBaseContext(), selectedVideoUri, FileType.VIDEO);
                             int position = selectedVideoUris.size();
                             selectedVideoUris.add(fileUri);
                             videoAdapter.notifyItemInserted(position);
@@ -167,7 +168,7 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
 
         // check permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            selectedVideoUris.addAll(CommonFunctions.getFiles(FileType.VIDEO));
+            selectedVideoUris.addAll(CommonFunctions.getFilesOne(FileType.VIDEO));
         }
 
         videoAdapter = new VideoAdapter(this, selectedVideoUris);
@@ -219,7 +220,7 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
                     if (actionMode != null) {
                         toggleSelection(position);
                     } else {
-                        Uri videoUri = selectedVideoUris.get(position);
+                        Uri videoUri = Uri.fromFile(selectedVideoUris.get(position));
                         openVideoPlayer(videoUri);
                     }
 
@@ -259,12 +260,13 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
 
 
     private void deleteSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             if (((selectedVideoUris.size() - 1) >= position) && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
-                CommonFunctions.moveToTrash(this, selectedVideoUris.get(position));
-                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
+                CommonFunctions.moveToTrash(this, Uri.fromFile(selectedVideoUris.get(position)));
+//                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
+                selectedVideoUris.get(position).delete();
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -281,12 +283,13 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
     }
 
     private void restoreSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             if ((selectedVideoUris.size() - 1) >= position && position != -1) {
                 selectedVideos.add(selectedVideoUris.get(position));
-                CommonFunctions.recoverFile(this, selectedVideoUris.get(position), FileType.VIDEO);
-                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
+                CommonFunctions.recoverFile(this, Uri.fromFile(selectedVideoUris.get(position)), FileType.VIDEO);
+//                CommonFunctions.deleteFile(this, selectedVideoUris.get(position));
+                selectedVideoUris.get(position).delete();
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -319,16 +322,17 @@ public class VideosActivity extends BaseActivity<ActivityVideosBinding> {
                         ClipData clipData = data.getClipData();
                         for (int i = 0; i < clipData.getItemCount(); i++) {
                             Uri selectedVideoUri = clipData.getItemAt(i).getUri();
-                            CommonFunctions.saveFile(this, selectedVideoUri, FileType.VIDEO);
+                            File newFile = CommonFunctions.saveFile(this, selectedVideoUri, FileType.VIDEO);
                             int position = selectedVideoUris.size();
-                            selectedVideoUris.add(selectedVideoUri);
+                            selectedVideoUris.add(newFile);
                             videoAdapter.notifyItemInserted(position);
                         }
 
                     } else if (data.getData() != null) {
                         Uri selectedVideoUri = data.getData();
                         int position = selectedVideoUris.size();
-                        selectedVideoUris.add(selectedVideoUri);
+                        File newFile = CommonFunctions.saveFile(this, selectedVideoUri, FileType.VIDEO);
+                        selectedVideoUris.add(newFile);
                         videoAdapter.notifyItemInserted(position);
                     }
 

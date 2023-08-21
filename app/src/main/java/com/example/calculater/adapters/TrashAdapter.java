@@ -1,6 +1,5 @@
 package com.example.calculater.adapters;
 
-import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +15,16 @@ import com.example.calculater.R;
 import com.example.calculater.utils.CommonFunctions;
 import com.example.calculater.utils.FileType;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 public class TrashAdapter extends RecyclerView.Adapter<TrashAdapter.ViewHolder> {
-    private Context context;
-    private List<Uri> trashList;
+    private List<File> trashList;
     private OnItemClickListener listener;
     private Set<Integer> selectedPositions;
 
-    public TrashAdapter(List<Uri> trashList) {
-        this.context = context;
+    public TrashAdapter(List<File> trashList) {
         this.trashList = trashList;
     }
 
@@ -48,7 +46,8 @@ public class TrashAdapter extends RecyclerView.Adapter<TrashAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Uri fileUri = trashList.get(position);
+        File file = trashList.get(position);
+        Uri fileUri = Uri.fromFile(file);
         FileType fileType = CommonFunctions.getFileType(holder.itemView.getContext(), fileUri);
         switch (fileType) {
             case IMAGE:

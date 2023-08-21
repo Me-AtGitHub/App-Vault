@@ -14,17 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.calculater.R;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
     private Context context;
-    private List<Uri> videoUris;
+    private List<File> videoUris;
     private OnItemClickListener listener;
     private Set<Integer> selectedPositions;
 
-    public VideoAdapter(Context context, List<Uri> videoUris) {
+    public VideoAdapter(Context context, List<File> videoUris) {
         this.context = context;
         this.videoUris = videoUris;
         this.selectedPositions = new HashSet<>();
@@ -48,7 +49,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        Uri videoUri = videoUris.get(position);
+        Uri videoUri = Uri.fromFile(videoUris.get(position));
         Log.d("thumbnailImageView", "onBindViewHolder: " + videoUri);
         Glide.with(holder.thumbnailImageView).load(videoUri).into(holder.thumbnailImageView);
     }

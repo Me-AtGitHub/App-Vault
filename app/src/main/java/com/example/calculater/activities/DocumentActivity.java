@@ -35,7 +35,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     private static final int WRITE_STORAGE_PERMISSION_REQUEST_CODE = 42;
     private final int FILE_REQUEST_CODE = 1;
     boolean add = false;
-    private List<Uri> selectedVideoUris;
+    private List<File> selectedVideoUris;
     private DocumentAdapter fileAdapter;
     private ActionMode actionMode;
     private Set<Integer> selectedPositions;
@@ -115,7 +115,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
         selectedVideoUris = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            selectedVideoUris.addAll(CommonFunctions.getFiles(FileType.DOCUMENT));
+            selectedVideoUris.addAll(CommonFunctions.getFilesOne(FileType.DOCUMENT));
         }
 
         fileAdapter = new DocumentAdapter(selectedVideoUris, this);
@@ -164,7 +164,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
                     if (actionMode != null) {
                         toggleSelection(position);
                     } else {
-                        Uri videoUri = selectedVideoUris.get(position);
+                        File videoUri = selectedVideoUris.get(position);
                     }
                 }
 
@@ -201,11 +201,11 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     }
 
     private void deleteSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             selectedVideos.add(selectedVideoUris.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                CommonFunctions.moveToTrash(this, selectedVideoUris.get(position));
+                CommonFunctions.moveToTrash(this, Uri.fromFile(selectedVideoUris.get(position)));
             }
         }
         selectedVideoUris.removeAll(selectedVideos);
@@ -221,11 +221,7 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void deleteItem(int position) {
-        Uri fileUri = selectedVideoUris.get(position);
-        // Get the file path from the Uri
-        String filePath = fileUri.getPath();
-        // Create a File object using the file path
-        File fileToDelete = new File(filePath);
+        File fileToDelete = selectedVideoUris.get(position);
         if (fileToDelete.exists()) {
             // Delete the file
             if (fileToDelete.delete()) {
@@ -239,11 +235,11 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
     }
 
     private void restoreSelectedVideos() {
-        List<Uri> selectedVideos = new ArrayList<>();
+        List<File> selectedVideos = new ArrayList<>();
         for (int position : selectedPositions) {
             selectedVideos.add(selectedVideoUris.get(position));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                CommonFunctions.recoverFile(this, selectedVideoUris.get(position), FileType.DOCUMENT);
+                CommonFunctions.recoverFile(this, Uri.fromFile(selectedVideoUris.get(position)), FileType.DOCUMENT);
                 deleteItem(position);
             }
         }
@@ -273,9 +269,9 @@ public class DocumentActivity extends BaseActivity<ActivityDocumentBinding> {
 
 
                 if (selectedFileUri != null) {
-                    Uri newFileUri = CommonFunctions.saveFile(this, selectedFileUri, FileType.DOCUMENT);
+                    File newFile = CommonFunctions.saveFile(this, selectedFileUri, FileType.DOCUMENT);
                     int position = selectedVideoUris.size();
-                    selectedVideoUris.add(newFileUri);
+                    selectedVideoUris.add(newFile);
                     fileAdapter.notifyItemInserted(position);
 
                     if (selectedVideoUris.isEmpty())
